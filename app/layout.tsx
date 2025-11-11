@@ -8,6 +8,9 @@ import "./globals.css";
 // NextThemes
 import { ThemeProvider } from "next-themes";
 
+// Clerk
+import { ClerkProvider } from "@clerk/nextjs";
+
 // Fonts
 const interFont = Inter({ subsets: ["latin"] });
 const barlowFont = Barlow({ subsets: ["latin"], weight: ["500", "700"], variable: "--font-barlow" });
@@ -24,17 +27,18 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
-			<body className={`${interFont.className} ${barlowFont.variable}`}>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-          disableTransitionOnChange
-        >
-					{children}
-				</ThemeProvider>
-			</body>
-		</html>
+		<ClerkProvider>
+			<html lang="en">
+				<body className={`${interFont.className} ${barlowFont.variable}`}>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+						disableTransitionOnChange>
+						{children}
+					</ThemeProvider>
+				</body>
+			</html>
+		</ClerkProvider>
 	);
 }
