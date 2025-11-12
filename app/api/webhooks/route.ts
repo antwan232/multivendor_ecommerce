@@ -1,13 +1,18 @@
+// Prisma
 import { User } from "@/lib/generated/prisma/client";
 import prisma from "@/lib/prisma";
+
+// Clerk
 import { clerkClient } from "@clerk/nextjs/server";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
-import { redirect } from "next/navigation";
 
+// Next.js
+import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
 	try {
+		// Retrieve user data through the webhook and verify it
 		const evt = await verifyWebhook(req);
 		const { data, type } = evt;
 
@@ -24,7 +29,7 @@ export async function POST(req: NextRequest) {
 			if (!user) redirect("/sign-in");
 
 			// When user created or updated
-			const User = await prisma.user.upsert({
+			const userDB = await prisma.user.upsert({
 				where: {
 					email: user.email,
 				},
@@ -40,15 +45,17 @@ export async function POST(req: NextRequest) {
 				},
 			});
 
-			// update userMetaData to the current role
+			
+
+			// Update userMetaData to the current role
 			(await clerkClient()).users.updateUserMetadata(data.id, {
 				privateMetadata: {
-					role: User.role || "USER",
+					role: userDB.role || "USER",
 				},
 			});
 		}
 
-		// When user deleted
+		// The Action when user deleted
 		if (type === "user.deleted") {
 			const userId = data.id;
 

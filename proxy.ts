@@ -1,9 +1,10 @@
+// Clerk
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-export default clerkMiddleware((auth, req, next) => {
-	const protectedRoutes = createRouteMatcher(["/dashboard/(.*)"]);
-
-	if (protectedRoutes(req)) auth.protect();
+export default clerkMiddleware(async (auth, req) => {
+	// Clerk protected routes 
+	const protectedRoutes = createRouteMatcher(["/dashboard", "/dashboard/(.*)"]);
+	if (protectedRoutes(req)) await auth.protect();
 });
 
 export const config = {
@@ -13,6 +14,5 @@ export const config = {
 		// Always run for API routes
 		"/(api|trpc)(.*)",
 		// matcher for cleark webhooks
-		
 	],
 };
