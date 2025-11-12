@@ -1,0 +1,16 @@
+{
+  "[prisma]": {
+    "editor.defaultFormatter": "prisma.prisma",
+    "editor.formatOnSave": true
+  },
+  "prisma.trace.server": "off",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
