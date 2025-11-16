@@ -5,15 +5,14 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
-	// Retrieve the current user
 	const user = await currentUser();
 
-	// If user role is "ADMIN", redirect to the home page
-	if (user?.privateMetadata.role === "ADMIN") redirect("/dashboard/admin");
+	// Redirect based on the user's role stored in Clerk metadata
+	const role = user?.privateMetadata.role;
 
-	// If user role is "SELLER", redirect to the home page
-	if (user?.privateMetadata.role === "SELLER") redirect("/dashboard/seller");
+	if (role === "ADMIN") redirect("/dashboard/admin");
+	if (role === "SELLER") redirect("/dashboard/seller");
 
-	// If user role is not defined or is "USER", redirect to the home page
-	if (!user?.privateMetadata.role || user?.privateMetadata.role === "USER") redirect("/");
+	// Default redirect for users without a specific role
+	redirect("/");
 }
