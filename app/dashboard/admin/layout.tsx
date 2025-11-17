@@ -1,6 +1,8 @@
 // Components
 import Header from "@/components/dashboard/header";
 import Sidebar from "@/components/dashboard/sidebar/sidebar";
+
+// Clerk
 import { currentUser } from "@clerk/nextjs/server";
 
 // Types
@@ -11,12 +13,12 @@ export default async function AdminDashbaordLayout({ children }: { children: Rea
 	const isAdmin = user?.privateMetadata?.role === "ADMIN";
 
 	return (
-		<div className="w-full h-full">
+		<>
 			<Sidebar isAdmin={isAdmin} />
-			<div className="w-full ml-40">
+			<div className="ml-75">
 				<Header />
-				<div className="w-full mt-10 p-4">{children}</div>
+				<div className="max-w-7xl p-5 mt-20">{children}</div>
 			</div>
-		</div>
+		</>
 	);
 }
