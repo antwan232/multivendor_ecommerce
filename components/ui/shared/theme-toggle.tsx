@@ -5,14 +5,19 @@ import { Moon, SunIcon } from "lucide-react";
 
 // UI Components
 import { Button } from "../button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../dropdown-menu";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "../dropdown-menu";
 import { useTheme } from "next-themes";
 
 export default function ThemeToggle() {
 	const { setTheme } = useTheme();
 
 	return (
-		<DropdownMenu>
+		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
 				<Button
 					variant="outline"

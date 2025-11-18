@@ -27,16 +27,15 @@ export const CategoryFormSchema = z.object({
 
 	image: z
 		.object({
-			url: z
-				.string({
-					error: (iss) => {
-						if (iss.code === "invalid_type") return `Category image must be a ${iss.expected}.`;
-						if (!iss.input) return "Category image is required.";
-					},
-				})
-				.length(1, "Choose a category image."),
+			url: z.string({
+				error: (iss) => {
+					if (iss.code === "invalid_type") return `Category image must be a ${iss.expected}.`;
+					if (!iss.input) return "Category image is required.";
+				},
+			}),
 		})
-		.array(),
+		.array()
+		.length(1, "Choose a category image."),
 
 	url: z
 		.string({

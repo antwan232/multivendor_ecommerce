@@ -35,14 +35,13 @@ export default function ImageUpload({
 	}, []);
 
   const onUpload = (result: any) => {
-    console.log('result.info.secure_url: ', result.info.secure_url);
 		onChange(result.info.secure_url);
 	};
 
 	switch (type) {
 		case "profile":
 			return (
-				<div className="relative rounded-full w-52 h-52 bg-gray-200 border-2 border-white shadow-2xl overflow-visible">
+				<div className="relative w-52 h-52 rounded-full bg-gray-200 border-2 border-white shadow-2xl overflow-visible">
 					{value.length > 0 && (
 						<Image
 							src={value[0]}
