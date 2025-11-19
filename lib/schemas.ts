@@ -53,3 +53,57 @@ export const CategoryFormSchema = z.object({
 
 	featured: z.boolean(),
 });
+
+// SubCategory form schema
+export const SubCategoryFormSchema = z.object({
+	name: z
+		.string({
+			error: (iss) => {
+				if (iss.code === "invalid_type") return `Sub-Category name must be a ${iss.expected}.`;
+				if (!iss.input) return "Sub-Category name is required.";
+			},
+		})
+		.min(2, {
+			error: (iss) => {
+				return `Sub-Category name must be at least ${iss.minimum} characters long.`;
+			},
+		})
+		.max(50, {
+			error: (iss) => {
+				return `Sub-Category name cannot exceed ${iss.maximum} characters.`;
+			},
+		})
+		.regex(
+			/^[a-zA-Z0-9\s'&-]+$/,
+			"Only letters, numbers, and spaces are allowed in the sub-category name."
+		),
+
+	image: z
+		.object({
+			url: z.string({
+				error: (iss) => {
+					if (iss.code === "invalid_type") return `Sub-Category image must be a ${iss.expected}.`;
+					if (!iss.input) return "Sub-Category image is required.";
+				},
+			}),
+		})
+		.array()
+		.length(1, "Choose a sub-category image."),
+
+	url: z
+		.string({
+			error: (iss) => {
+				if (iss.code === "invalid_type") return `Sub-Category url must be a ${iss.expected}.`;
+				if (!iss.input) return "Sub-Category url is required.";
+			},
+		})
+		.min(2, { message: "Sub-Category url must be at least 2 characters long." })
+		.max(50, { message: "Sub-Category url cannot exceed 50 characters." })
+		.regex(/^(?!.*(?:[-_ ]){2,})[a-zA-Z0-9_-]+$/, {
+			message:
+				"Only letters, numbers, hyphen, and underscore are allowed in the sub-category url, and consecutive occurrences of hyphens, underscores, or spaces are not permitted.",
+		}),
+
+	featured: z.boolean(),
+	categoryId: z.uuid("Sub-Category must have a category."),
+});
