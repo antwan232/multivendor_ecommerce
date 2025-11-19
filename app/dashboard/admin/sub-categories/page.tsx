@@ -29,6 +29,7 @@ export default async function SubCategoriesAdminPage() {
 			data={subCategories}
 			searchPlaceholder="Search Sub-Category name..."
 			columns={columns}
+			newTabLink="/dashboard/admin/sub-categories/new"
 		/>
 	);
 }
