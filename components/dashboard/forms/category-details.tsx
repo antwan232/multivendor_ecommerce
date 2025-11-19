@@ -14,9 +14,6 @@ import { Controller, useForm } from "react-hook-form";
 // Schema
 import { CategoryFormSchema } from "@/lib/schemas";
 
-// React
-// import { useEffect } from "react";
-
 // Components
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,10 +28,9 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/c
 
 interface CategoryDetailsProps {
 	data?: Category;
-	preset: string;
 }
 
-export default function CategoryDetails({ data, preset }: CategoryDetailsProps) {
+export default function CategoryDetails({ data }: CategoryDetailsProps) {
 	const router = useRouter();
 
 	// Form hook for managing controlled form state and validation
@@ -42,7 +38,7 @@ export default function CategoryDetails({ data, preset }: CategoryDetailsProps) 
 		mode: "onChange",
 		resolver: zodResolver(CategoryFormSchema),
 		defaultValues: {
-			name: data?.url ?? "",
+			name: data?.name ?? "",
 			featured: data?.featured ?? false,
 			image: data?.image ? [{ url: data.image }] : [],
 			url: data?.url ?? "",
@@ -52,17 +48,6 @@ export default function CategoryDetails({ data, preset }: CategoryDetailsProps) 
 	const {
 		formState: { isSubmitting },
 	} = form;
-
-	// Update from default data when data has changed
-	// useEffect(() => {
-	// 	if (data)
-	// 		form.reset({
-	// 			name: data?.url,
-	// 			featured: data?.featured,
-	// 			image: data?.image ? [{ url: data.image }] : [],
-	// 			url: data?.url,
-	// 		});
-	// }, [data, form]);
 
 	const onSubmit = async (values: z.infer<typeof CategoryFormSchema>) => {
 		try {
@@ -122,7 +107,6 @@ export default function CategoryDetails({ data, preset }: CategoryDetailsProps) 
 										data-invalid={fieldState.invalid}>
 										<ImageUpload
 											type="profile"
-											preset={preset}
 											value={field.value?.map((img) => img.url) ?? []}
 											disabled={isSubmitting}
 											onChange={(url) => field.onChange([{ url }])}

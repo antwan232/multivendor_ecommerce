@@ -55,3 +55,47 @@ export const upsertCategoryAction = async (category: Category) => {
 		throw error;
 	}
 };
+
+export const getCategories = async () => {
+	const categories = await prisma.category.findMany({
+		orderBy: {
+			updatedAt: "desc",
+		},
+	});
+	return categories;
+};
+
+export const deleteCategory = async (categoryId: string) => {
+	// Check if the user is AHUTHENTICATED
+	const user = await currentUser();
+	if (!user) throw new Error("Unauthenticated.");
+
+	// Check for AUTHORIZATION
+	if (user.privateMetadata.role !== "ADMIN")
+		throw new Error("Unauthorized Access: Admin Privileges Required for Entry.");
+
+	// Ensure category ID is provided
+	if (!categoryId) throw new Error("Please provide category ID.");
+
+	// Delete category from the database
+	const response = await prisma.category.delete({
+		where: {
+			id: categoryId,
+		},
+	});
+	return response;
+};
+
+export const getCategory = async (categoryId: string) => {
+	// Ensure category ID is provided
+	if (!categoryId) throw new Error("Please provide category ID.");
+
+	const category = await prisma.category.findFirst({
+		where: {
+			id: categoryId,
+		},
+	});
+	if (!category) return;
+
+	return category;
+};

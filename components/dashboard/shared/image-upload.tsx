@@ -16,7 +16,6 @@ interface ImageUploadProps {
 	value: string[];
 	type: "standard" | "profile" | "cover";
 	dontShowPreview?: boolean;
-	preset: string;
 }
 
 export default function ImageUpload({
@@ -26,7 +25,6 @@ export default function ImageUpload({
 	value,
 	type,
 	dontShowPreview,
-	preset,
 }: ImageUploadProps) {
 	// Make sure that hydaration has completed
 	const isMount = useRef(false);
@@ -34,7 +32,7 @@ export default function ImageUpload({
 		isMount.current = true;
 	}, []);
 
-  const onUpload = (result: any) => {
+	const onUpload = (result: any) => {
 		onChange(result.info.secure_url);
 	};
 
@@ -52,7 +50,7 @@ export default function ImageUpload({
 						/>
 					)}
 					<CldUploadWidget
-						uploadPreset={preset}
+						uploadPreset="acba8r8m"
 						onSuccess={onUpload}>
 						{({ open }) => {
 							const handleClick = () => {
