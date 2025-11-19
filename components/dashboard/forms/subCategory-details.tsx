@@ -56,9 +56,6 @@ export default function SubCategoryDetails({ data, categories }: SubCategoryDeta
 		},
 	});
 
-	const watching = form.watch();
-	console.log("watch: ", watching);
-
 	const {
 		formState: { isSubmitting },
 	} = form;

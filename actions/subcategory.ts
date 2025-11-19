@@ -58,6 +58,9 @@ export const upsertSubCategoryAction = async (subcategory: SubCategory) => {
 
 export const getSubCategories = async () => {
 	const subcategories = await prisma.subCategory.findMany({
+		include: {
+			category: true,
+		},
 		orderBy: {
 			updatedAt: "desc",
 		},
@@ -65,7 +68,7 @@ export const getSubCategories = async () => {
 	return subcategories;
 };
 
-export const deleteCategory = async (subCategoryId: string) => {
+export const deleteSubCategory = async (subCategoryId: string) => {
 	// Check if the user is AHUTHENTICATED
 	const user = await currentUser();
 	if (!user) throw new Error("Unauthenticated.");
