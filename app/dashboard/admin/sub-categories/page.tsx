@@ -1,11 +1,26 @@
 import { getCategories } from "@/actions/category";
 import { getSubCategories } from "@/actions/subcategory";
+<<<<<<< HEAD
 import SubCategoryDetails from "@/components/dashboard/forms/sub-category-details.client";
 import DataTable from "@/components/ui/data-table";
 import { Plus } from "lucide-react";
 import { columns } from "../../../../components/dashboard/columns/sub-categories-columns.client";
 
 export default async function SubCategoriesAdminPage() {
+=======
+import SubCategoryDetails from "@/components/dashboard/forms/subCategory-details";
+import DataTable from "@/components/ui/data-table";
+import { currentUser } from "@clerk/nextjs/server";
+import { Plus } from "lucide-react";
+import { redirect } from "next/navigation";
+import { columns } from "./columns";
+
+export default async function SubCategoriesAdminPage() {
+	// Protect the route
+	const user = await currentUser();
+	if (user?.privateMetadata.role !== "ADMIN") redirect("/");
+
+>>>>>>> c52035117beed7f4df833a846c63805707eb97f7
 	const subCategories = await getSubCategories();
 	const categories = await getCategories();
 	if (subCategories.length === 0 || categories.length === 0) return;
