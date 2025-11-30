@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id        String    @id
+  name      String
+  email     String    @unique(map: "User_email_key")
+  picture   String    @db.Text
+  role      user_role @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  stores    Store[]
+}
+
+enum user_role {
+  USER
+  ADMIN
+  SELLER
+}
+
+model Category {
+  id        String   @id
+  name      String
+  url       String
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  image     String
+}
+
+model SubCategory {
+  id         String   @id
+  name       String
+  url        String
+  image      String
+  featured   Boolean  @default(false)
+  categoryId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+
+  @@index([categoryId], map: "SubCategory_categoryId_idx")
+}
+
+model Store {
+  id                     String       @id @default(uuid())
+  name                   String
+  description            String       @db.Text
+  email                  String       @unique(map: "Store_email_key")
+  url                    String       @unique(map: "Store_url_key")
+  phone                  String
+  logo                   String
+  cover                  String
+  status                 store_status @default(PENDING)
+  averageRating          Float        @default(0)
+  featured               Boolean      @default(false)
+  returnPolicy           String?
+  defaultShippingService String?
+  defaultShippingFees    Float?
+  defaultDeliveryTimeMin Int?
+  defaultDeliveryTimeMax Int?
+  createdAt              DateTime     @default(now())
+  updatedAt              DateTime
+  userId                 String
+  user                   User         @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "Store_userId_idx")
+}
+
+enum store_status {
+  PENDING
+  ACTIVE
+  BANNED
+  DISABLED
+}
