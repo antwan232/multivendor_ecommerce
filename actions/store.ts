@@ -69,3 +69,23 @@ export const upsertStoreAction = async (store: Partial<Store>) => {
 		throw error;
 	}
 };
+
+export const getStores = async () => {
+	try {
+		// 1) AHUTHENTICATOIN & AUTHORIZATION
+		const user = await currentUser();
+		if (!user) throw new Error("Unauthenticated");
+		if (user.privateMetadata.role !== "SELLER") throw new Error("Unauthorized Access: Seller Previleges Required.");
+
+		const stores = await prisma.store.findMany({
+			where: {
+				userId: user.id,
+			},
+		});
+
+		return stores;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};

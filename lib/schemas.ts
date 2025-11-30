@@ -30,12 +30,8 @@ export const CategoryFormSchema = z.object({
 		.object({
 			url: z.string({
 				error: (iss) => {
-<<<<<<< HEAD
 					if (iss.code === "invalid_type")
 						return `Category image must be a ${iss.expected}.`;
-=======
-					if (iss.code === "invalid_type") return `Category image must be a ${iss.expected}.`;
->>>>>>> c52035117beed7f4df833a846c63805707eb97f7
 					if (!iss.input) return "Category image is required.";
 				},
 			}),
@@ -46,12 +42,8 @@ export const CategoryFormSchema = z.object({
 	url: z
 		.string({
 			error: (iss) => {
-<<<<<<< HEAD
 				if (iss.code === "invalid_type")
 					return `Category url must be a ${iss.expected}.`;
-=======
-				if (iss.code === "invalid_type") return `Category url must be a ${iss.expected}.`;
->>>>>>> c52035117beed7f4df833a846c63805707eb97f7
 				if (!iss.input) return "Category url is required.";
 			},
 		})
@@ -69,7 +61,6 @@ export const CategoryFormSchema = z.object({
 export const SubCategoryFormSchema = z.object({
 	name: z
 		.string({
-<<<<<<< HEAD
 			error: (iss) =>
 				iss.code === "invalid_type"
 					? `Sub-Category name must be a ${iss.expected}.`
@@ -82,22 +73,6 @@ export const SubCategoryFormSchema = z.object({
 		.max(50, {
 			error: (iss) =>
 				`Sub-Category name cannot exceed ${iss.maximum} characters.`,
-=======
-			error: (iss) => {
-				if (iss.code === "invalid_type") return `Sub-Category name must be a ${iss.expected}.`;
-				if (!iss.input) return "Sub-Category name is required.";
-			},
-		})
-		.min(2, {
-			error: (iss) => {
-				return `Sub-Category name must be at least ${iss.minimum} characters long.`;
-			},
-		})
-		.max(50, {
-			error: (iss) => {
-				return `Sub-Category name cannot exceed ${iss.maximum} characters.`;
-			},
->>>>>>> c52035117beed7f4df833a846c63805707eb97f7
 		})
 		.regex(
 			/^[a-zA-Z0-9\s'&-]+$/,
@@ -107,17 +82,10 @@ export const SubCategoryFormSchema = z.object({
 	image: z
 		.object({
 			url: z.string({
-<<<<<<< HEAD
 				error: (iss) =>
 					iss.code === "invalid_type"
 						? `Sub-Category image must be a ${iss.expected}.`
 						: "Sub-Category image is required.",
-=======
-				error: (iss) => {
-					if (iss.code === "invalid_type") return `Sub-Category image must be a ${iss.expected}.`;
-					if (!iss.input) return "Sub-Category image is required.";
-				},
->>>>>>> c52035117beed7f4df833a846c63805707eb97f7
 			}),
 		})
 		.array()
@@ -125,17 +93,10 @@ export const SubCategoryFormSchema = z.object({
 
 	url: z
 		.string({
-<<<<<<< HEAD
 			error: (iss) =>
 				iss.code === "invalid_type"
 					? `Sub-Category url must be a ${iss.expected}.`
 					: "Sub-Category url is required.",
-=======
-			error: (iss) => {
-				if (iss.code === "invalid_type") return `Sub-Category url must be a ${iss.expected}.`;
-				if (!iss.input) return "Sub-Category url is required.";
-			},
->>>>>>> c52035117beed7f4df833a846c63805707eb97f7
 		})
 		.min(2, { message: "Sub-Category url must be at least 2 characters long." })
 		.max(50, { message: "Sub-Category url cannot exceed 50 characters." })
@@ -147,7 +108,6 @@ export const SubCategoryFormSchema = z.object({
 	featured: z.boolean(),
 	categoryId: z.uuid("Sub-Category must have a category."),
 });
-<<<<<<< HEAD
 
 // Store schema
 export const StoreFormSchema = z.object({
@@ -211,5 +171,3 @@ export const StoreFormSchema = z.object({
 	featured: z.boolean().default(false).optional(),
 	status: z.string().default("PENDING").optional(),
 });
-=======
->>>>>>> c52035117beed7f4df833a846c63805707eb97f7

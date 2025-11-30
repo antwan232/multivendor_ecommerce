@@ -27,13 +27,15 @@ enum user_role {
 }
 
 model Category {
-  id        String   @id
-  name      String
-  url       String
-  featured  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime
-  image     String
+  id            String        @id
+  name          String
+  url           String
+  featured      Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime
+  image         String
+  subCategories SubCategory[] @relation("CategoryToSubcategory")
+  
 }
 
 model SubCategory {
@@ -43,6 +45,7 @@ model SubCategory {
   image      String
   featured   Boolean  @default(false)
   categoryId String
+  category   Category @relation("CategoryToSubcategory", fields: [categoryId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime
 

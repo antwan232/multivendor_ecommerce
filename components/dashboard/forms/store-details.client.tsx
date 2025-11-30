@@ -27,11 +27,11 @@ import { upsertStoreAction } from "@/actions/store";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 
-interface CategoryDetailsProps {
+interface StoreDetailsProps {
 	data?: Store;
 }
 
-export default function StoreDetails({ data }: CategoryDetailsProps) {
+export default function StoreDetails({ data }: StoreDetailsProps) {
 	const router = useRouter();
 
 	// Form hook for managing controlled form state and validation
@@ -57,7 +57,7 @@ export default function StoreDetails({ data }: CategoryDetailsProps) {
 	} = form;
 
 	const onSubmit = async (values: z.infer<typeof StoreFormSchema>) => {
-		console.log("clicked");
+		
 
 		try {
 			// Upserting category data
@@ -89,7 +89,7 @@ export default function StoreDetails({ data }: CategoryDetailsProps) {
 			<Card className="text-start">
 				<CardHeader>
 					<CardTitle>Store information</CardTitle>
-					<CardDescription>{data?.id ? `Update ${data.name} store information.` : "lets create a category, You can edit store later from the store settings page."}</CardDescription>
+					<CardDescription>{data?.id ? `Update ${data.name} store information.` : "lets create a Store, You can edit store later from the store settings page."}</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form

@@ -12,8 +12,7 @@ export const upsertSubCategoryAction = async (subcategory: SubCategory) => {
 		// 1) AHUTHENTICATOIN & AUTHORIZATION
 		const user = await currentUser();
 		if (!user) throw new Error("Unauthenticated");
-		if (user.privateMetadata.role !== "ADMIN")
-			throw new Error("Unauthorized Access: Admin Previleges Required for Entry.");
+		if (user.privateMetadata.role !== "ADMIN") throw new Error("Unauthorized Access: Admin Previleges Required for Entry.");
 
 		// 2) Ensure category data is provided
 		if (!subcategory) throw new Error("Please provide subcategory data.");
@@ -34,10 +33,8 @@ export const upsertSubCategoryAction = async (subcategory: SubCategory) => {
 
 		if (existingSubCategory) {
 			let errorMessage;
-			if (existingSubCategory.name === subcategory.name)
-				errorMessage = "A subcategory with the same name already exists";
-			if (existingSubCategory.url === subcategory.url)
-				errorMessage = "A subcategory with the same URL already exists";
+			if (existingSubCategory.name === subcategory.name) errorMessage = "A subcategory with the same name already exists";
+			if (existingSubCategory.url === subcategory.url) errorMessage = "A subcategory with the same URL already exists";
 
 			throw new Error(errorMessage);
 		}
@@ -74,8 +71,7 @@ export const deleteSubCategory = async (subCategoryId: string) => {
 	if (!user) throw new Error("Unauthenticated.");
 
 	// Check for AUTHORIZATION
-	if (user.privateMetadata.role !== "ADMIN")
-		throw new Error("Unauthorized Access: Admin Privileges Required for Entry.");
+	if (user.privateMetadata.role !== "ADMIN") throw new Error("Unauthorized Access: Admin Privileges Required for Entry.");
 
 	// Ensure category ID is provided
 	if (!subCategoryId) throw new Error("Please provide subcategory ID.");
