@@ -23,7 +23,6 @@ export default function NavLinks({ menuLinks }: { menuLinks: DashboardSidebarMen
 	useEffect(() => {
 		const getAllStores = async () => {
 			const allStores = await getStores();
-			console.log("allStores: ", allStores);
 			setStores(allStores);
 		};
 		getAllStores();
@@ -31,7 +30,7 @@ export default function NavLinks({ menuLinks }: { menuLinks: DashboardSidebarMen
 
 	const { storeSegment } = useParams();
 	const pathname = usePathname();
-	const storeUrlPath = pathname.includes(`${storeSegment}/`) && pathname?.split(`/${storeSegment}/`)[1].slice(0);
+	const storeUrlPath = pathname.includes(`${storeSegment}/`) && pathname.split(`/${storeSegment}/`)[1].slice(0);
 
 	return (
 		<>

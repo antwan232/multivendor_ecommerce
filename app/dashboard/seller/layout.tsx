@@ -3,6 +3,7 @@ import Header from "@/components/dashboard/header";
 import NavLinks from "@/components/dashboard/sidebar/navLinks.client";
 import Sidebar from "@/components/dashboard/sidebar/sidebar";
 import SidebarNav from "@/components/dashboard/sidebar/sidebar-nav";
+import StoreSwitcher from "@/components/dashboard/sidebar/store-switcher.client";
 
 // Constants
 import { sellerDashboardSidebarOptions } from "@/constants/data";
@@ -17,9 +18,7 @@ import { redirect } from "next/navigation";
 // Types
 import { PropsWithChildren } from "react";
 
-export default async function StoreDashboardLayout({
-	children,
-}: PropsWithChildren) {
+export default async function StoreDashboardLayout({ children }: PropsWithChildren) {
 	// Protect the route
 	const user = await currentUser();
 	if (user?.privateMetadata.role !== "SELLER") redirect("/");
@@ -36,6 +35,7 @@ export default async function StoreDashboardLayout({
 	return (
 		<>
 			<Sidebar>
+				<StoreSwitcher className="mb-4" stores={stores} />
 				{isThereStores && (
 					<SidebarNav>
 						<NavLinks menuLinks={sellerDashboardSidebarOptions} />
