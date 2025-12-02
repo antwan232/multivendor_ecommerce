@@ -9,77 +9,129 @@ datasource db {
   relationMode = "prisma"
 }
 
-model User {
-  id        String    @id
-  name      String
-  email     String    @unique(map: "User_email_key")
-  picture   String    @db.Text
-  role      user_role @default(USER)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime
-  stores    Store[]
-}
-
-enum user_role {
+enum Role {
   USER
   ADMIN
   SELLER
 }
 
+model User {
+  id      String @id @default(uuid())
+  name    String
+  email   String @unique
+  picture String @db.Text
+  role    Role   @default(USER)
+
+  stores Store[] @relation("UserStores")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Category {
-  id            String        @id
-  name          String
-  url           String
-  featured      Boolean       @default(false)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime
-  image         String
+  id       String  @id @default(uuid())
+  name     String
+  image    String
+  url      String  @unique
+  featured Boolean @default(false)
+
   subCategories SubCategory[] @relation("CategoryToSubcategory")
-  
+  products Product[] @relation("CategoryToProduct")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model SubCategory {
-  id         String   @id
-  name       String
-  url        String
-  image      String
-  featured   Boolean  @default(false)
+  id       String  @id @default(uuid())
+  name     String
+  image    String
+  url      String  @unique
+  featured Boolean @default(false)
+
   categoryId String
   category   Category @relation("CategoryToSubcategory", fields: [categoryId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime
 
-  @@index([categoryId], map: "SubCategory_categoryId_idx")
+  products Product[] @relation("SubCategoryToProduct")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
 }
 
-model Store {
-  id                     String       @id @default(uuid())
-  name                   String
-  description            String       @db.Text
-  email                  String       @unique(map: "Store_email_key")
-  url                    String       @unique(map: "Store_url_key")
-  phone                  String
-  logo                   String
-  cover                  String
-  status                 store_status @default(PENDING)
-  averageRating          Float        @default(0)
-  featured               Boolean      @default(false)
-  returnPolicy           String?
-  defaultShippingService String?
-  defaultShippingFees    Float?
-  defaultDeliveryTimeMin Int?
-  defaultDeliveryTimeMax Int?
-  createdAt              DateTime     @default(now())
-  updatedAt              DateTime
-  userId                 String
-  user                   User         @relation(fields: [userId], references: [id])
-
-  @@index([userId], map: "Store_userId_idx")
-}
-
-enum store_status {
+enum StoreStatus {
   PENDING
   ACTIVE
   BANNED
   DISABLED
+}
+
+model Store {
+  id                                  String      @id @default(uuid())
+  name                                String
+  description                         String      @db.Text
+  email                               String      @unique
+  phone                               String
+  url                                 String      @unique
+  logo                                String
+  cover                               String
+  status                              StoreStatus @default(PENDING)
+  averageRating                       Float       @default(0)
+  numReviews                          Int         @default(0)
+  featured                            Boolean     @default(false)
+  returnPolicy                        String      @default("Return in 30 days.")
+  defaultShippingService              String      @default("International Delivery")
+  defaultShippingFeePerItem           Float       @default(0)
+  defaultShippingFeeForAdditionalItem Float       @default(0)
+  defaultShippingFeePerKg             Float       @default(0)
+  defaultShippingFeeFixed             Float       @default(0)
+  defaultDeliveryTimeMin              Int         @default(7)
+  defaultDeliveryTimeMax              Int         @default(31)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  products Product[] @relation("StoreToProduct")
+
+  userId String
+  user   User   @relation("UserStores", fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+enum ShippingFeeMethod {
+  ITEM
+  WEIGHT
+  FIXED
+}
+
+model Product {
+  id                          String            @id @default(uuid())
+  name                        String
+  description                 String            @db.LongText
+  slug                        String            @unique
+  brand                       String
+  rating                      Float             @default(0)
+  sales                       Int               @default(0)
+  numReviews                  Int               @default(0)
+  shippingFeeMethod           ShippingFeeMethod @default(ITEM)
+  views                       Int               @default(0)
+  freeShippingForAllCountries Boolean           @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  storeId String
+  store   Store  @relation("StoreToProduct", fields: [storeId], references: [id])
+
+  categoryId String
+  category   Category @relation("CategoryToProduct", fields: [categoryId], references: [id])
+
+  subCategoryId String
+  subCategory   SubCategory @relation("SubCategoryToProduct", fields: [subCategoryId], references: [id])
+
+  @@index([storeId])
+  @@index([categoryId])
+  @@index([subCategoryId])
 }
