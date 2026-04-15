@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { upsertStoreAction } from "@/actions/store";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
+import { startTransition } from "react";
 
 interface StoreDetailsProps {
 	data?: Store;
@@ -51,37 +52,41 @@ export default function StoreDetails({ data }: StoreDetailsProps) {
 		},
 	});
 	const isFieldsNotUpdated = Object.values(form.formState.dirtyFields).length === 0;
-	
+
 	const {
 		formState: { isSubmitting },
 	} = form;
 
 	const onSubmit = async (values: z.infer<typeof StoreFormSchema>) => {
-		
-
-		try {
-			// Upserting category data
-			const response = await upsertStoreAction({
-				id: data?.id ? data.id : v4(),
-				name: values.name,
-				description: values.description,
-				email: values.email,
-				phone: values.phone,
-				logo: values.logo[0].url,
-				cover: values.cover[0].url,
-				url: values.url,
-				featured: values.featured,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			});
-			// Displaying success message
-			toast.success(data?.id ? "Store has been updated." : `Congratulations! '${response?.name}' Store is now created.`);
-			// Redirect or Refresh data
-			router.push(`/dashboard/seller/stores/${values.url}`);
-		} catch (error: any) {
-			// Handling form submission errors from the backend
-			toast.error("Oops!", { description: error.toString() });
-		}
+		startTransition(async () => {
+			try {
+				// Upserting category data
+				const response = await upsertStoreAction({
+					id: data?.id ? data.id : v4(),
+					name: values.name,
+					description: values.description,
+					email: values.email,
+					phone: values.phone,
+					logo: values.logo[0].url,
+					cover: values.cover[0].url,
+					url: values.url,
+					featured: values.featured,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				});
+				// Displaying success message
+				toast.success(
+					data?.id
+						? "Store has been updated."
+						: `Congratulations! '${response?.name}' Store is now created.`,
+				);
+				// Redirect or Refresh data
+				router.push(`/dashboard/seller/stores/${values.url}`);
+			} catch (error: any) {
+				// Handling form submission errors from the backend
+				toast.error("Oops!", { description: error.toString() });
+			}
+		});
 	};
 
 	return (
@@ -89,7 +94,11 @@ export default function StoreDetails({ data }: StoreDetailsProps) {
 			<Card className="text-start">
 				<CardHeader>
 					<CardTitle>Store information</CardTitle>
-					<CardDescription>{data?.id ? `Update ${data.name} store information.` : "lets create a Store, You can edit store later from the store settings page."}</CardDescription>
+					<CardDescription>
+						{data?.id
+							? `Update ${data.name} store information.`
+							: "lets create a Store, You can edit store later from the store settings page."}
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form
@@ -113,7 +122,9 @@ export default function StoreDetails({ data }: StoreDetailsProps) {
 													disabled={isSubmitting}
 													isInvalid={fieldState.invalid}
 													onChange={(url) => field.onChange([{ url }])}
-													onRemove={(url) => field.onChange([...field.value.filter((image) => image.url !== url)])}
+													onRemove={(url) =>
+														field.onChange([...field.value.filter((image) => image.url !== url)])
+													}
 												/>
 												{fieldState.invalid && (
 													<FieldError
@@ -140,7 +151,9 @@ export default function StoreDetails({ data }: StoreDetailsProps) {
 												disabled={isSubmitting}
 												isInvalid={fieldState.invalid}
 												onChange={(url) => field.onChange([{ url }])}
-												onRemove={(url) => field.onChange([...field.value.filter((image) => image.url !== url)])}
+												onRemove={(url) =>
+													field.onChange([...field.value.filter((image) => image.url !== url)])
+												}
 											/>
 											{fieldState.invalid && (
 												<FieldError
@@ -167,7 +180,7 @@ export default function StoreDetails({ data }: StoreDetailsProps) {
 											disabled={isSubmitting}
 											aria-disabled={isSubmitting}
 										/>
-										{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										<FieldError errors={[fieldState.error]} />
 									</Field>
 								)}
 							/>
@@ -185,7 +198,7 @@ export default function StoreDetails({ data }: StoreDetailsProps) {
 											disabled={isSubmitting}
 											aria-disabled={isSubmitting}
 										/>
-										{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										<FieldError errors={[fieldState.error]} />
 									</Field>
 								)}
 							/>
@@ -205,7 +218,7 @@ export default function StoreDetails({ data }: StoreDetailsProps) {
 												type="email"
 												aria-disabled={isSubmitting}
 											/>
-											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+											<FieldError errors={[fieldState.error]} />
 										</Field>
 									)}
 								/>
@@ -224,7 +237,7 @@ export default function StoreDetails({ data }: StoreDetailsProps) {
 												type="tel"
 												aria-disabled={isSubmitting}
 											/>
-											{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+											<FieldError errors={[fieldState.error]} />
 										</Field>
 									)}
 								/>
@@ -245,7 +258,7 @@ export default function StoreDetails({ data }: StoreDetailsProps) {
 											type="text"
 											aria-disabled={isSubmitting}
 										/>
-										{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										<FieldError errors={[fieldState.error]} />
 									</Field>
 								)}
 							/>
@@ -273,7 +286,13 @@ export default function StoreDetails({ data }: StoreDetailsProps) {
 								className="flex justify-start w-fit"
 								type="submit"
 								disabled={data?.id ? (isFieldsNotUpdated ? true : isSubmitting) : isSubmitting}>
-								{isSubmitting ? (data?.id ? "updating..." : "creating...") : data?.id ? "Save store information" : "Create store"}
+								{isSubmitting
+									? data?.id
+										? "updating..."
+										: "creating..."
+									: data?.id
+										? "Save store information"
+										: "Create store"}
 							</Button>
 						</FieldGroup>
 					</form>

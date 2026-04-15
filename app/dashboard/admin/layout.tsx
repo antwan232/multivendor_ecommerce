@@ -3,23 +3,18 @@ import Header from "@/components/dashboard/header";
 import NavLinks from "@/components/dashboard/sidebar/navLinks.client";
 import Sidebar from "@/components/dashboard/sidebar/sidebar";
 import SidebarNav from "@/components/dashboard/sidebar/sidebar-nav";
-import { adminDashboardSidebarOptions } from "@/constants/data";
 
-// Clerk
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+// Options object
+import { adminDashboardSidebarOptions } from "@/constants/data";
 
 // Types
 import { ReactNode } from "react";
 
-export default async function AdminDashbaordLayout({
-	children,
-}: {
-	children: ReactNode;
-}) {
-	// Protect the route
-	const user = await currentUser();
-	if (user?.privateMetadata.role !== "ADMIN") redirect("/");
+// Auth utility
+import { protectRoute } from "@/actions/user";
+
+export default async function AdminDashbaordLayout({ children }: { children: ReactNode }) {
+	await protectRoute("ADMIN");
 
 	return (
 		<>

@@ -1,12 +1,12 @@
 "use client";
 
 // React, Next.js imports
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // Custom components
-import CategoryDetails from "@/components/dashboard/forms/category-details";
+import SubCategoryDetails from "@/components/dashboard/forms/sub-category-details.client";
 import CustomModal from "@/components/dashboard/shared/custom-modal";
 
 // UI components
@@ -37,6 +37,7 @@ import { toast } from "sonner";
 
 // Server actions
 import { deleteSubCategory, getSubCategory } from "@/actions/subcategory";
+import { getCategories } from "@/actions/category";
 
 // Lucide icons
 import { BadgeCheck, BadgeMinus, Edit, MoreHorizontal, Trash } from "lucide-react";
@@ -45,10 +46,10 @@ import { BadgeCheck, BadgeMinus, Edit, MoreHorizontal, Trash } from "lucide-reac
 import { ColumnDef } from "@tanstack/react-table";
 
 // Prisma
-import { Category, SubCategory } from "@/lib/generated/prisma/client";
+import { Category } from "@/lib/generated/prisma/client";
+
+// Types
 import { SubCategoryWithCategoryType } from "@/lib/types";
-import SubCategoryDetails from "@/components/dashboard/forms/subCategory-details";
-import { getCategories } from "@/actions/category";
 
 export const columns: ColumnDef<SubCategoryWithCategoryType>[] = [
 	{

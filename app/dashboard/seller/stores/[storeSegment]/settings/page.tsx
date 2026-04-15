@@ -1,22 +1,13 @@
+import { getStore } from "@/actions/store";
 import StoreDetails from "@/components/dashboard/forms/store-details.client";
-import prisma from "@/lib/prisma";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-export default async function SellerStoreSettingsPage({
-	params,
-}: {
-	params: Promise<{
-		storeSegment: string;
-	}>;
-}) {
-	const { storeSegment } = await params;
-	const storeDetails = await prisma.store.findUnique({
-		where: {
-			url: storeSegment,
-		},
-	});
-  
-  if (!storeDetails) redirect("/dashboard");
-  
+export default async function SellerStoreSettingsPage() {
+	const user = await currentUser();
+	const storeDetails = await getStore(user!.id);
+
+	if (!storeDetails) redirect("/dashboard");
+
 	return <StoreDetails data={storeDetails} />;
 }

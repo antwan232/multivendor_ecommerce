@@ -48,7 +48,7 @@ export default function StoreSwitcher({ stores, className }: StoreSwitcherProps)
 					aria-label="Select a store"
 					className={cn("w-63 justify-between", className)}>
 					<StoreIcon className="mr-2 size-4" />
-					{params?.storeSegment ? activeStore?.label : "Choose a store"}
+					{params?.storeSegment && activeStore?.label || "Choose a store"}
 					<ChevronsUpDown className="ml-auto size-4 shrink-0 opacity-50" />
 				</Button>
 			</PopoverTrigger>

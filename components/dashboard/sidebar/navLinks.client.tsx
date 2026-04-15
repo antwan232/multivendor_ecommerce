@@ -19,18 +19,19 @@ import { Store } from "@/lib/generated/prisma/client";
 
 export default function NavLinks({ menuLinks }: { menuLinks: DashboardSidebarMenuInterface[] }) {
 	const [stores, setStores] = useState<Store[]>([]);
+	const { storeSegment } = useParams();
+	const pathname = usePathname();
+	const storeUrlPath =
+		pathname.includes(`${storeSegment}/`) && pathname.split(`/${storeSegment}/`)[1].slice(0);
 
 	useEffect(() => {
 		const getAllStores = async () => {
-			const allStores = await getStores();
-			setStores(allStores);
+			const stores = await getStores();
+			setStores(stores);
 		};
-		getAllStores();
-	}, []);
 
-	const { storeSegment } = useParams();
-	const pathname = usePathname();
-	const storeUrlPath = pathname.includes(`${storeSegment}/`) && pathname.split(`/${storeSegment}/`)[1].slice(0);
+		if (storeUrlPath) getAllStores();
+	}, [storeUrlPath]);
 
 	return (
 		<>
@@ -42,10 +43,22 @@ export default function NavLinks({ menuLinks }: { menuLinks: DashboardSidebarMen
 					<CommandItem
 						key={index}
 						className={cn("w-full h-12 cursor-pointer mt-1", {
-							"bg-accent text-accent-foreground": storeSegment ? (pathname.includes(`${storeSegment}/`) ? link.link === storeUrlPath : link.link === "") : link.link === pathname,
+							"bg-accent text-accent-foreground": storeSegment
+								? pathname.includes(`${storeSegment}/`)
+									? link.link === storeUrlPath
+									: link.link === ""
+								: link.link === pathname,
 						})}>
 						<Link
-							href={pathname.includes(`${storeSegment}/`) ? `/dashboard/seller/stores/${storeSegment}/${link.link}` : pathname.includes("stores") ? (stores.length > 0 ? `/dashboard/seller/stores/${stores[0].url}/settings` : `/dashboard/seller/stores/new`) : link.link}
+							href={
+								pathname.includes(`/stores`)
+									? `/dashboard/seller/stores/${stores[0]?.url}/${link.link}`
+									: pathname.includes("stores")
+										? stores.length > 0
+											? `/dashboard/seller/stores/${stores[0].url}/settings`
+											: `/dashboard/seller/stores/new`
+										: link.link
+							}
 							className="flex items-center gap-2 hover:bg-transparent rounded-md transition-all w-full">
 							{icon}
 							<span>{link.label}</span>

@@ -6,7 +6,16 @@ import prisma from "@/lib/prisma";
 
 // Clerk
 import { currentUser } from "@clerk/nextjs/server";
+import { cacheTag, updateTag } from "next/cache";
 
+/**
+ * @function upsertCategory
+ * @param {Category} category Category object containing details of the category to be upserted.
+ * @description Upserts a category into the database, updating if it exists or creating a new one if not.
+ * @protected
+ * @access Admin only
+ * @returns Updated or newly created category details
+ */
 export const upsertCategoryAction = async (category: Category) => {
 	try {
 		// 1) AHUTHENTICATOIN & AUTHORIZATION
@@ -49,14 +58,26 @@ export const upsertCategoryAction = async (category: Category) => {
 			create: category,
 			update: category,
 		});
+
 		return categoryDetails;
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		throw error;
 	}
 };
 
+/**
+ * @function getCategories
+ * @description Retrieves all categories from the database.
+ * @public @readonly
+ * @nextCache cache fetched data
+ * @cacheTag cats
+ * @returns Array of categories sorted by updatedAt date in descending order.
+ */
 export const getCategories = async () => {
+	"use cache";
+	cacheTag("cats");
+
 	const categories = await prisma.category.findMany({
 		orderBy: {
 			updatedAt: "desc",
@@ -65,6 +86,14 @@ export const getCategories = async () => {
 	return categories;
 };
 
+/**
+ * @function deleteCategory
+ * @description Deletes a category from the database.
+ * @protected
+ * @access Admin only
+ * @param categoryId The ID of the category to be deleted.
+ * @returns Response indicating success or failure of the deletion operation.
+ */
 export const deleteCategory = async (categoryId: string) => {
 	// Check if the user is AHUTHENTICATED
 	const user = await currentUser();
@@ -83,14 +112,28 @@ export const deleteCategory = async (categoryId: string) => {
 			id: categoryId,
 		},
 	});
+
+	updateTag("cats");
 	return response;
 };
 
+/**
+ * @function getCategory
+ * @param categoryId The ID of the category to be retrieved.
+ * @description Retrieves a specific category from the database.
+ * @public @readonly
+ * @nextCache cache fetched data
+ * @cacheTag cats
+ * @returns Details of the requested category.
+ */
 export const getCategory = async (categoryId: string) => {
+	"use cache";
+	cacheTag("cats");
+
 	// Ensure category ID is provided
 	if (!categoryId) throw new Error("Please provide category ID.");
 
-	const category = await prisma.category.findFirst({
+	const category = await prisma.category.findUnique({
 		where: {
 			id: categoryId,
 		},

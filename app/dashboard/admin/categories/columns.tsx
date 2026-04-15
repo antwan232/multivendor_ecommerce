@@ -5,9 +5,10 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+
 // Custom components
-import CategoryDetails from "@/components/dashboard/forms/category-details";
 import CustomModal from "@/components/dashboard/shared/custom-modal";
+import CategoryDetails from "@/components/dashboard/forms/category-details.client";
 
 // UI components
 import {

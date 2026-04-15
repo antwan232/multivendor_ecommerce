@@ -7,24 +7,24 @@ import { useRouter } from "next/navigation";
 import { Category } from "@/lib/generated/prisma/browser";
 
 // Form handling utilities
-import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import * as z from "zod";
 
 // Schema
 import { CategoryFormSchema } from "@/lib/schemas";
 
 // Components
-import { AlertDialog } from "@/components/ui/alert-dialog";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import ImageUpload from "../shared/image-upload.client";
-import { v4 } from "uuid";
-import { toast } from "sonner";
 import { upsertCategoryAction } from "@/actions/category";
+import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { v4 } from "uuid";
+import ImageUpload from "../shared/image-upload.client";
 
 interface CategoryDetailsProps {
 	data?: Category;
@@ -66,7 +66,7 @@ export default function CategoryDetails({ data }: CategoryDetailsProps) {
 			toast.success(
 				data?.id
 					? "Category has been updated."
-					: `Congratulations! '${response?.name}' is now created.`
+					: `Congratulations! '${response?.name}' is now created.`,
 			);
 
 			// Redirect or Refresh data
@@ -115,7 +115,7 @@ export default function CategoryDetails({ data }: CategoryDetailsProps) {
 												field.onChange([...field.value.filter((image) => image.url !== url)])
 											}
 										/>
-										{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										<FieldError errors={[fieldState.error]} />
 									</Field>
 								)}
 							/>
@@ -133,7 +133,7 @@ export default function CategoryDetails({ data }: CategoryDetailsProps) {
 											disabled={isSubmitting}
 											aria-disabled={isSubmitting}
 										/>
-										{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										<FieldError errors={[fieldState.error]} />
 									</Field>
 								)}
 							/>
@@ -152,7 +152,7 @@ export default function CategoryDetails({ data }: CategoryDetailsProps) {
 											disabled={isSubmitting}
 											aria-disabled={isSubmitting}
 										/>
-										{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										<FieldError errors={[fieldState.error]} />
 									</Field>
 								)}
 							/>
@@ -185,8 +185,8 @@ export default function CategoryDetails({ data }: CategoryDetailsProps) {
 										? "updating..."
 										: "creating..."
 									: data?.id
-									? "Save category information"
-									: "Create category"}
+										? "Save category information"
+										: "Create category"}
 							</Button>
 						</FieldGroup>
 					</form>

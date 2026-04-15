@@ -4,9 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 // Clerk
-import { User } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 
-export default function UserInfo({ user }: { user: User | null }) {
+export default async function UserInfo() {
+	const user = await currentUser();
 	const role = user?.privateMetadata.role?.toString();
 
 	return (

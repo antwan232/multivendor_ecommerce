@@ -6,7 +6,9 @@ interface LogoImgProps {
 	height: string;
 }
 
-export default function LogoImg({ width, height }: LogoImgProps) {
+export default async function LogoImg({ width, height }: LogoImgProps) {
+	"use cache";
+
 	return (
 		<div
 			className="z-50"

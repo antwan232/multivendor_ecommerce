@@ -10,16 +10,16 @@ import {
 // Data
 import { PropsWithChildren } from "react";
 
-export default function SidebarNav({ children }: PropsWithChildren) {
+export default async function SidebarNav({ children }: PropsWithChildren) {
+	"use cache";
+
 	return (
 		<nav className="relative grow">
-			<Command className="rounded-lg overflow-visible bg-transparent">
+			<Command className="rounded-lg overflow-y-scroll no-scrollbar bg-transparent">
 				<CommandInput placeholder="Search..." />
 				<CommandList className="py-2 overflow-visible">
 					<CommandEmpty>No Links Found.</CommandEmpty>
-					<CommandGroup className="overflow-visible pt-0 relative">
-						{children}
-					</CommandGroup>
+					<CommandGroup className="overflow-visible pt-0 relative">{children}</CommandGroup>
 				</CommandList>
 			</Command>
 		</nav>

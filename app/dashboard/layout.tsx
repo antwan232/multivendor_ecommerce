@@ -1,5 +1,6 @@
+// React
 import { ReactNode } from "react";
 
-export default function DashbaordLayout({ children }: { children: ReactNode }) {
-  return <div>{children}</div>;
+export default async function DashbaordLayout({ children }: { children: ReactNode }) {
+	return <div>{children}</div>;
 }

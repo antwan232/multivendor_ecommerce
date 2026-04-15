@@ -4,9 +4,17 @@
 import { useModal } from "@/context/modal-provider";
 
 // UI components
-import { Dialog, DialogContent, DialogDescription, DialogHeader } from "@/components/ui/dialog";
-import { DialogTitle } from "@radix-ui/react-dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+
 import { cn } from "@/lib/utils";
+
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 type Props = {
 	heading?: string;
@@ -25,9 +33,16 @@ const CustomModal = ({ children, defaultOpen, subheading, heading, maxWidth }: P
 			<DialogContent
 				className={cn("overflow-y-scroll md:max-h-[700px] md:h-fit h-screen bg-card", maxWidth)}>
 				<DialogHeader className="pt-8 text-left">
-					{heading && <DialogTitle className="text-2xl font-bold">{heading}</DialogTitle>}
+					{heading ? (
+						<DialogTitle className="text-2xl font-bold">{heading}</DialogTitle>
+					) : (
+						<VisuallyHidden>
+							<DialogTitle className="text-2xl font-bold">
+								Modal to update current shipping rate
+							</DialogTitle>
+						</VisuallyHidden>
+					)}
 					{subheading && <DialogDescription>{subheading}</DialogDescription>}
-
 					{children}
 				</DialogHeader>
 			</DialogContent>

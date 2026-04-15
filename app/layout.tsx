@@ -1,6 +1,6 @@
 // Next.js
 import type { Metadata } from "next";
-import { Inter, Barlow } from "next/font/google";
+import { Barlow, Inter } from "next/font/google";
 
 // Global css
 import "./globals.css";
@@ -8,10 +8,12 @@ import "./globals.css";
 // NextThemes
 import { ThemeProvider } from "next-themes";
 
-// Clerk
-import { ClerkProvider } from "@clerk/nextjs";
-import { Toaster } from "sonner";
+// Context
+import ClerkProviderClient from "@/components/providers/ClerkProvider";
 import ModalProvider from "@/context/modal-provider";
+
+// Sonner
+import { Toaster } from "sonner";
 
 // Fonts
 const interFont = Inter({ subsets: ["latin"] });
@@ -28,15 +30,19 @@ export const metadata: Metadata = {
 		"Welcome to GoShop, your ultimate destination for seamless online shopping! Discover a vast array of products from trusted sellers, all in one convenient marketplace. With GoShop, shopping is made easy, fast, and enjoyable. Find everything you need, from fashion and electronics to home essentials, and experience the joy of hassle-free online shopping. Start exploring today!",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
 	return (
-		<ClerkProvider afterSignOutUrl="/">
-			<html lang="en">
-				<body className={`${interFont.className} ${barlowFont.variable}`}>
+		<html
+			lang="en"
+			suppressHydrationWarning>
+			<body
+				suppressHydrationWarning
+				className={`${interFont.className} ${barlowFont.variable}`}>
+				<ClerkProviderClient>
 					<ThemeProvider
 						attribute="class"
 						defaultTheme="system"
@@ -45,8 +51,8 @@ export default function RootLayout({
 						<ModalProvider>{children}</ModalProvider>
 						<Toaster position="bottom-right" />
 					</ThemeProvider>
-				</body>
-			</html>
-		</ClerkProvider>
+				</ClerkProviderClient>
+			</body>
+		</html>
 	);
 }

@@ -1,4 +1,7 @@
+// Theme provider component
 import ThemeToggle from "@/components/ui/shared/theme-toggle";
+
+// Clerk
 import { UserButton } from "@clerk/nextjs";
 
 export default function Home() {

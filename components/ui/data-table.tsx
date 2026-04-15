@@ -4,8 +4,8 @@
 import Link from "next/link";
 
 // Custom components
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import CustomModal from "../dashboard/shared/custom-modal.client";
 
 // Table components
@@ -95,7 +95,7 @@ export default function DataTable<TData, TValue>({
 												heading={heading || ""}
 												subheading={subheading || ""}>
 												{modalChildren}
-											</CustomModal>
+											</CustomModal>,
 										);
 								}}>
 								{actionButtonText}
@@ -115,7 +115,7 @@ export default function DataTable<TData, TValue>({
 
 			{/* Table */}
 			<div className=" border bg-background rounded-lg">
-				<Table className="">
+				<Table>
 					{/* Table header */}
 					{!noHeader && (
 						<TableHeader>
@@ -146,7 +146,7 @@ export default function DataTable<TData, TValue>({
 										{row.getVisibleCells().map((cell) => (
 											<TableCell
 												key={cell.id}
-												className="max-w-[400px] break-words">
+												className="max-w-[400px] wrap-break-word">
 												{flexRender(cell.column.columnDef.cell, cell.getContext())}
 											</TableCell>
 										))}

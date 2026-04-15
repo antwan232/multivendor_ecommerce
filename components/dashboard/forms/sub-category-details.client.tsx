@@ -35,6 +35,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useEffect } from "react";
 interface SubCategoryDetailsProps {
 	data?: SubCategory;
 	categories: Category[];
@@ -78,7 +79,7 @@ export default function SubCategoryDetails({ data, categories }: SubCategoryDeta
 			toast.success(
 				data?.id
 					? "Sub-Category has been updated."
-					: `Congratulations! '${response?.name}' is now created.`
+					: `Congratulations! '${response?.name}' is now created.`,
 			);
 
 			// Redirect or Refresh data
@@ -122,7 +123,7 @@ export default function SubCategoryDetails({ data, categories }: SubCategoryDeta
 										className="flex flex-col items-start"
 										data-invalid={fieldState.invalid}>
 										<ImageUpload
-											state={fieldState}
+											isInvalid={fieldState.invalid}
 											type="profile"
 											value={field.value?.map((img) => img.url) ?? []}
 											disabled={isSubmitting}
@@ -131,7 +132,7 @@ export default function SubCategoryDetails({ data, categories }: SubCategoryDeta
 												field.onChange([...field.value.filter((image) => image.url !== url)])
 											}
 										/>
-										{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										<FieldError errors={[fieldState.error]} />
 									</Field>
 								)}
 							/>
@@ -149,7 +150,7 @@ export default function SubCategoryDetails({ data, categories }: SubCategoryDeta
 											disabled={isSubmitting}
 											aria-disabled={isSubmitting}
 										/>
-										{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										<FieldError errors={[fieldState.error]} />
 									</Field>
 								)}
 							/>
@@ -168,7 +169,7 @@ export default function SubCategoryDetails({ data, categories }: SubCategoryDeta
 											disabled={isSubmitting}
 											aria-disabled={isSubmitting}
 										/>
-										{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										<FieldError errors={[fieldState.error]} />
 									</Field>
 								)}
 							/>
@@ -202,7 +203,7 @@ export default function SubCategoryDetails({ data, categories }: SubCategoryDeta
 												))}
 											</SelectContent>
 										</Select>
-										{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+										<FieldError errors={[fieldState.error]} />
 									</Field>
 								)}
 							/>
@@ -237,8 +238,8 @@ export default function SubCategoryDetails({ data, categories }: SubCategoryDeta
 										? "updating..."
 										: "creating..."
 									: data?.id
-									? "Save sub-category information"
-									: "Create sub-category"}
+										? "Save sub-category information"
+										: "Create sub-category"}
 							</Button>
 						</FieldGroup>
 					</form>

@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider     = "mysql"
-  // url          = env("DATABASE_URL") 
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
@@ -89,7 +89,8 @@ model Store {
   defaultDeliveryTimeMin              Int         @default(7)
   defaultDeliveryTimeMax              Int         @default(31)
 
-  products Product[] @relation("StoreToProduct")
+  products      Product[]      @relation("StoreToProduct")
+  shippingRates ShippingRate[] @relation("StoreShippingRates")
 
   userId String
   user   User   @relation("UserStores", fields: [userId], references: [id])
@@ -129,23 +130,33 @@ model Product {
   subCategory   SubCategory @relation("SubCategoryToProduct", fields: [subCategoryId], references: [id])
 
   productVariants ProductVariant[] @relation("ProductToProductVariant")
+  specs           Spec[]           @relation("ProductSpec")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  offerTagId String?
+  offerTag   OfferTag? @relation("OfferTagToProduct", fields: [offerTagId], references: [id])
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
+  questions Question[] @relation("ProductQuestion")
 
   @@index([storeId])
   @@index([categoryId])
   @@index([subCategoryId])
+  @@index([offerTagId])
 }
 
 model ProductVariant {
-  id          String  @id @default(uuid())
-  name        String
-  description String
-  slug        String  @unique
+  id                 String  @id @default(uuid())
+  variantName        String
+  variantDescription String? @db.LongText
+  variantImage       String
+  slug               String  @unique
+
   isSale      Boolean @default(false)
-  keywords    String
-  sku         String
+  saleEndDate String?
+
+  keywords String
+  sku      String
 
   productId String
   products  Product @relation("ProductToProductVariant", fields: [productId], references: [id])
@@ -153,6 +164,7 @@ model ProductVariant {
   sizes  Size[]                @relation("ProductVariantToVariantSize")
   images ProductVariantImage[] @relation("ProductVariantToVariantImage")
   colors Color[]               @relation("ProductVariantToVariantColor")
+  specs  Spec[]                @relation("ProductVariantSpec")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -165,7 +177,7 @@ model Size {
   size     String
   quantity Int
   price    Float
-  discound Float  @default(0)
+  discount Float  @default(0)
 
   productVariantId String
   productVariant   ProductVariant @relation("ProductVariantToVariantSize", fields: [productVariantId], references: [id])
@@ -202,3 +214,82 @@ model Color {
 
   @@index([productVariantId])
 }
+
+model OfferTag {
+  id   String @id @default(uuid())
+  name String
+  url  String @unique
+
+  products Product[] @relation("OfferTagToProduct")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Spec {
+  id    String @id @default(uuid())
+  name  String
+  value String
+
+  productId String?
+  product   Product? @relation("ProductSpec", fields: [productId], references: [id], onDelete: Cascade)
+
+  productVariantId String?
+  productVariant   ProductVariant? @relation("ProductVariantSpec", fields: [productVariantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([productId])
+  @@index([productVariantId])
+}
+
+model Question {
+  id       String @id @default(uuid())
+  question String
+  answer   String
+
+  productId String
+  product   Product @relation("ProductQuestion", fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([productId])
+}
+
+model Country {
+  id            String         @id @default(uuid())
+  name          String         @unique
+  code          String         @unique
+  shippingRates ShippingRate[] @relation("CountryShippingRates")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model ShippingRate {
+  id String @id @default(uuid())
+
+  shippingService              String
+  shippingFeePerItem           Float
+  shippingFeeForAdditionalItem Float
+  shippingFeePerKg             Float
+  shippingFeeFixed             Float
+  deliveryTimeMin              Int
+  deliveryTimeMax              Int
+  returnPolicy                 String
+
+  countryId String
+  country   Country @relation("CountryShippingRates", fields: [countryId], references: [id])
+
+  storeId String
+  store   Store  @relation("StoreShippingRates", fields: [storeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([countryId])
+  @@index([storeId])
+}
+
