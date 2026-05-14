@@ -1,5 +1,4 @@
-// Components
-import CategoryDetails from "@/components/dashboard/forms/category-details.client";
+import CategoryDetails from "@/components/dashboard/forms/category-details";
 
 export default function AdminNewCategoryPage() {
 	return <CategoryDetails />;

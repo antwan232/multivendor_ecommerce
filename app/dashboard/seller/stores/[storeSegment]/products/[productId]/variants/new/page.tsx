@@ -1,8 +1,9 @@
-import ProductDetails from "@/components/dashboard/forms/products-details.client";
+import ProductDetails from "@/components/dashboard/forms/products-details";
 
 // Server actions
 import { getCategories } from "@/actions/category";
-import { getAllOfferTags, getMainProductInfo } from "@/actions/products";
+import { getMainProductInfo } from "@/actions/products";
+import { getAllOfferTags } from "@/actions/offerTag";
 
 export default async function SellerNewProductVariantPage({
 	params,
@@ -12,7 +13,7 @@ export default async function SellerNewProductVariantPage({
 	const { productId, storeSegment } = await params;
 
 	const categories = await getCategories();
-	const product = await getMainProductInfo(productId);
+	const product = await getMainProductInfo(productId, storeSegment);
 	const offerTags = await getAllOfferTags(storeSegment);
 
 	if (!product) return;

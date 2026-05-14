@@ -2,8 +2,10 @@
 import { PropsWithChildren } from "react";
 
 // Components
-import LogoImg from "../../ui/shared/logo-img";
 import UserInfo from "./../user-info";
+
+// IMG
+import LogoImg from "../../ui/shared/logo-img";
 
 export default async function Sidebar({ children }: PropsWithChildren) {
 	return (

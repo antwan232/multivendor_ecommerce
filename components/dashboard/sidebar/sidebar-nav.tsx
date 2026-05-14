@@ -7,7 +7,7 @@ import {
 	CommandList,
 } from "@/components/ui/command";
 
-// Data
+// React
 import { PropsWithChildren } from "react";
 
 export default async function SidebarNav({ children }: PropsWithChildren) {

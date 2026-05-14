@@ -1,8 +1,13 @@
 "use server";
 
+// Prisma
 import { OfferTag } from "@/lib/generated/prisma/client";
 import prisma from "@/lib/prisma";
+
+// Clerk
 import { currentUser } from "@clerk/nextjs/server";
+
+// Next
 import { cacheTag, updateTag } from "next/cache";
 
 /**
@@ -12,7 +17,7 @@ import { cacheTag, updateTag } from "next/cache";
  * @readonly
  * @returns Array of offer tags sorted by updatedAt date in ascending order.
  */
-export const getAllOfferTags = async (storeUrl?: string) => {
+export const getAllOfferTags = async (storeUrl: string) => {
 	"use cache";
 	cacheTag(`offerTags-${storeUrl}`);
 
@@ -53,7 +58,7 @@ export const getAllOfferTags = async (storeUrl?: string) => {
 		},
 		orderBy: {
 			products: {
-				_count: "desc", // Order by the count of associated products in descending order
+				_count: "desc", 
 			},
 		},
 	});
@@ -183,6 +188,7 @@ export const deleteOfferTag = async (offerTagId: string) => {
 				id: offerTagId,
 			},
 		});
+		
 		updateTag(`offerTags-${response.url}`);
 		return response;
 	} catch (error) {

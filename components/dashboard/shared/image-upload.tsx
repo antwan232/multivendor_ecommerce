@@ -1,13 +1,20 @@
 "use client";
 
-// Next.js
+// React, Next.js
+import { FC, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-
-// React
-import { useEffect, useRef } from "react";
 
 // Cloudinary
 import { CldUploadWidget } from "next-cloudinary";
+
+// UI
+import { Button } from "@/components/ui/button";
+
+// Utils
+import { cn } from "@/lib/utils";
+
+// Icon
+import { Trash } from "lucide-react";
 
 interface ImageUploadProps {
 	disabled?: boolean;
@@ -16,20 +23,43 @@ interface ImageUploadProps {
 	value: string[];
 	type: "standard" | "profile" | "cover";
 	dontShowPreview?: boolean;
+	isInvalid: boolean;
+	error?: boolean;
+	className?: string;
 }
 
-export default function ImageUpload({
+const ImageUpload: FC<ImageUploadProps> = ({
 	disabled,
 	onChange,
 	onRemove,
 	value,
+	isInvalid,
 	type,
 	dontShowPreview,
-}: ImageUploadProps) {
-	// Make sure that hydaration has completed
-	const isMount = useRef(false);
+	error,
+	className = "",
+}) => {
+	const isMounted = useRef(false);
+
+	const [isBouncing, setIsBouncing] = useState(false);
+
 	useEffect(() => {
-		isMount.current = true;
+		if (error) {
+			const handleBounce = () => {
+				setIsBouncing(true);
+			};
+			handleBounce();
+			const timer = setTimeout(() => {
+				setIsBouncing(false);
+			}, 1500);
+			return () => clearTimeout(timer);
+		}
+	}, [error]);
+
+	useEffect(() => {
+		if (!isMounted.current) {
+			isMounted.current = true;
+		}
 	}, []);
 
 	const onUpload = (result: any) => {
@@ -39,21 +69,33 @@ export default function ImageUpload({
 	switch (type) {
 		case "profile":
 			return (
-				<div className="relative w-52 h-52 rounded-full bg-gray-200 border-2 border-white shadow-2xl overflow-visible">
+				<div
+					className={cn(
+						"relative rounded-full w-52 h-52  bg-gray-200 border-2 border-white shadow-2xl overflow-visible",
+						{
+							"bg-red-100": error,
+							"animate-pulse": isBouncing,
+							"border-red-400": isInvalid,
+						},
+					)}>
 					{value.length > 0 && (
 						<Image
 							src={value[0]}
-							alt="profile image of admin"
+							alt={`${type} image`}
 							width={300}
 							height={300}
-							className="w-52 h-52 rounded-full object-cover absolute inset-0"
+							className="w-52 h-52 rounded-full object-cover absolute top-0 left-0 bottom-0 right-0"
 						/>
 					)}
 					<CldUploadWidget
-						uploadPreset="acba8r8m"
-						onSuccess={onUpload}>
+						onOpen={() => {
+							document.body.style.pointerEvents = "";
+							document.body.style.overflow = "";
+						}}
+						onSuccess={onUpload}
+						uploadPreset="acba8r8m">
 						{({ open }) => {
-							const handleClick = () => {
+							const onClick = () => {
 								open();
 							};
 
@@ -61,9 +103,9 @@ export default function ImageUpload({
 								<>
 									<button
 										type="button"
-										className="z-20 absolute right-0 bottom-6 flex items-center font-medium text-[17px] h-14 w-14 justify-center  text-white bg-gradient-to-t from-blue-500 to-blue-300 border-none shadow-lg rounded-full hover:shadow-md active:shadow-sm"
+										className="z-50 absolute right-0 bottom-6 flex items-center font-medium text-[17px] h-14 w-14 justify-center  text-white bg-linear-to-t from-blue-primary to-blue-300 border-none shadow-lg rounded-full hover:shadow-md active:shadow-sm"
 										disabled={disabled}
-										onClick={handleClick}>
+										onClick={onClick}>
 										<svg
 											viewBox="0 0 640 512"
 											fill="white"
@@ -78,9 +120,129 @@ export default function ImageUpload({
 					</CldUploadWidget>
 				</div>
 			);
+
 		case "cover":
-			return <div>cover</div>;
+			return (
+				<div
+					className={cn(
+						"relative w-full bg-gray-100 rounded-lg bg-linear-to-b from-gray-100 via-gray-100 to-gray-400 overflow-hidden " +
+							className,
+						{
+							"from-red-100 to-red-200 ": error,
+							"animate-bounce": isBouncing,
+							"border border-red-300": isInvalid,
+						},
+					)}
+					style={{ height: "348px" }}>
+					{value.length > 0 && (
+						<Image
+							src={value[0]}
+							alt=""
+							width={1200}
+							height={1200}
+							className="w-full h-full rounded-lg object-cover"
+						/>
+					)}
+					<CldUploadWidget
+						onSuccess={onUpload}
+						onOpen={() => {
+							document.body.style.pointerEvents = "";
+							document.body.style.overflow = "";
+						}}
+						uploadPreset="acba8r8m">
+						{({ open }) => {
+							const onClick = () => {
+								open();
+							};
+
+							return (
+								<button
+									type="button"
+									className="absolute bottom-4 right-4 flex items-center font-medium text-[17px] py-3 px-6 text-white bg-linear-to-t from-blue-primary to-blue-300 border-none shadow-lg rounded-full hover:shadow-md active:shadow-sm"
+									disabled={disabled}
+									onClick={onClick}>
+									<svg
+										viewBox="0 0 640 512"
+										fill="white"
+										height="1em"
+										xmlns="http://www.w3.org/2000/svg"
+										className="mr-2">
+										<path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z" />
+									</svg>
+									<span>{value.length > 0 ? "Change cover" : "Upload a cover"}</span>
+								</button>
+							);
+						}}
+					</CldUploadWidget>
+				</div>
+			);
+
 		default:
-			return <div>standard</div>;
+			return (
+				<div>
+					<div className="mb-4 flex items-center gap-4">
+						{value.length > 0 &&
+							!dontShowPreview &&
+							value.map((imageUrl) => (
+								<div
+									key={imageUrl}
+									className="relative w-[200px] min-h-[100px] max-h-[200px]">
+									<div className="z-10 absolute top-2 right-2">
+										<Button
+											onClick={() => onRemove(imageUrl)}
+											type="button"
+											variant="destructive"
+											size="icon"
+											className="rounded-full">
+											<Trash className="w-4 h-4" />
+										</Button>
+									</div>
+
+									<Image
+										fill
+										className="object-cover rounded-md"
+										alt=""
+										src={imageUrl}
+									/>
+								</div>
+							))}
+					</div>
+					<CldUploadWidget
+						onSuccess={onUpload}
+						onOpen={() => {
+							document.body.style.pointerEvents = "";
+							document.body.style.overflow = "";
+						}}
+						uploadPreset="acba8r8m">
+						{({ open }) => {
+							const onClick = () => {
+								open();
+							};
+
+							return (
+								<>
+									<button
+										type="button"
+										className="flex items-center font-medium text-[17px] py-3 px-6 text-white bg-linear-to-t from-blue-500 to-blue-300 border-none shadow-lg rounded-full hover:shadow-md active:shadow-sm"
+										disabled={disabled}
+										onClick={onClick}>
+										<svg
+											viewBox="0 0 640 512"
+											fill="white"
+											height="1em"
+											xmlns="http://www.w3.org/2000/svg"
+											className="mr-2">
+											<path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z" />
+										</svg>
+										<span>Upload images</span>
+									</button>
+								</>
+							);
+						}}
+					</CldUploadWidget>
+				</div>
+			);
 	}
-}
+};
+
+export default ImageUpload;

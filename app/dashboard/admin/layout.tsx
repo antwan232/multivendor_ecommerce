@@ -1,6 +1,6 @@
 // Components
 import Header from "@/components/dashboard/header";
-import NavLinks from "@/components/dashboard/sidebar/navLinks.client";
+import NavLinks from "@/components/dashboard/sidebar/navLinks";
 import Sidebar from "@/components/dashboard/sidebar/sidebar";
 import SidebarNav from "@/components/dashboard/sidebar/sidebar-nav";
 

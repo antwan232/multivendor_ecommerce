@@ -3,10 +3,19 @@
 // Provider
 import { useModal } from "@/context/modal-provider";
 
-// UI components
-import { Dialog, DialogContent, DialogDescription, DialogHeader } from "@/components/ui/dialog";
-import { DialogTitle } from "@radix-ui/react-dialog";
+// UI
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle
+} from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+
+// Utils
 import { cn } from "@/lib/utils";
+
 
 type Props = {
 	heading?: string;
@@ -22,15 +31,25 @@ const CustomModal = ({ children, defaultOpen, subheading, heading, maxWidth }: P
 		<Dialog
 			open={isOpen || defaultOpen}
 			onOpenChange={setClose}>
-			<DialogContent
-				className={cn("overflow-y-scroll md:max-h-[700px] md:h-fit h-screen bg-card", maxWidth)}>
-				<DialogHeader className="pt-8 text-left">
-					{heading && <DialogTitle className="text-2xl font-bold">{heading}</DialogTitle>}
-					{subheading && <DialogDescription>{subheading}</DialogDescription>}
-
-					{children}
-				</DialogHeader>
-			</DialogContent>
+			
+				<DialogContent
+					onFocusOutside={() => setClose()}
+					className={cn("overflow-y-scroll md:max-h-[700px] md:h-fit h-screen bg-card", maxWidth)}>
+					<DialogHeader className="pt-8 text-left">
+						{heading ? (
+							<DialogTitle className="text-2xl font-bold">{heading}</DialogTitle>
+						) : (
+							<VisuallyHidden>
+								<DialogTitle className="text-2xl font-bold">
+									Modal to update current shipping rate
+								</DialogTitle>
+							</VisuallyHidden>
+						)}
+						{subheading && <DialogDescription>{subheading}</DialogDescription>}
+						{children}
+					</DialogHeader>
+				</DialogContent>
+			
 		</Dialog>
 	);
 };

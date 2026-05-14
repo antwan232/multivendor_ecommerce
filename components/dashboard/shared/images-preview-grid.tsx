@@ -12,7 +12,7 @@ import { cn, getDominantColors, getGridClassName } from "@/lib/utils";
 
 // Icons
 import { Trash } from "lucide-react";
-import ColorPalette from "./color-palette.client";
+import ColorPalette from "./color-palette";
 
 interface ImagesPreviewGridProps {
 	images: { url: string }[];

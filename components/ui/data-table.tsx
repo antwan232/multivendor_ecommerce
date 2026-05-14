@@ -6,7 +6,7 @@ import Link from "next/link";
 // Custom components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import CustomModal from "../dashboard/shared/custom-modal.client";
+import CustomModal from "../dashboard/shared/custom-modal";
 
 // Table components
 import {
@@ -87,16 +87,15 @@ export default function DataTable<TData, TValue>({
 					{modalChildren && (
 						<div className="flex items-center gap-5">
 							<Button
-								className="flex- gap-2"
+								className="flex-1 gap-2"
 								onClick={() => {
-									if (modalChildren)
-										setOpen(
-											<CustomModal
-												heading={heading || ""}
-												subheading={subheading || ""}>
-												{modalChildren}
-											</CustomModal>,
-										);
+									setOpen(
+										<CustomModal
+											heading={heading || ""}
+											subheading={subheading || ""}>
+											{modalChildren}
+										</CustomModal>,
+									);
 								}}>
 								{actionButtonText}
 							</Button>

@@ -6,6 +6,8 @@ import prisma from "@/lib/prisma";
 
 // Clerk
 import { currentUser } from "@clerk/nextjs/server";
+
+// Next
 import { cacheTag, updateTag } from "next/cache";
 
 /**
@@ -59,6 +61,8 @@ export const upsertCategoryAction = async (category: Category) => {
 			update: category,
 		});
 
+		updateTag("cats");
+
 		return categoryDetails;
 	} catch (error) {
 		console.error(error);
@@ -83,6 +87,7 @@ export const getCategories = async () => {
 			updatedAt: "desc",
 		},
 	});
+
 	return categories;
 };
 

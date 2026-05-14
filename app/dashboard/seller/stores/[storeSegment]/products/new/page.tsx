@@ -1,6 +1,9 @@
+// Server Actions
 import { getCategories } from "@/actions/category";
-import { getAllOfferTags } from "@/actions/products";
-import ProductDetails from "@/components/dashboard/forms/products-details.client";
+import { getAllOfferTags } from "@/actions/offerTag";
+
+// Components
+import ProductDetails from "@/components/dashboard/forms/products-details";
 
 export default async function SellerNewProductPage({
 	params,
@@ -9,7 +12,7 @@ export default async function SellerNewProductPage({
 }) {
 	const { storeSegment } = await params;
 	const categories = await getCategories();
-	const offerTags = await getAllOfferTags();
+	const offerTags = await getAllOfferTags(storeSegment);
 
 	return (
 		<ProductDetails

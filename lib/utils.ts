@@ -1,8 +1,8 @@
-import { User } from "@clerk/nextjs/server";
 import { clsx, type ClassValue } from "clsx";
 import ColorTheif from "colorthief";
-import { redirect } from "next/navigation";
 import { twMerge } from "tailwind-merge";
+import { Country } from "./types";
+import countries from "@/data/countries.json";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -56,4 +56,34 @@ export const getDominantColors = (imgUrl: string): Promise<string[]> => {
 			reject(new Error("Failed to load image"));
 		};
 	});
+};
+
+const DEFAULT_COUNTRY: Country = {
+	name: "UnitedStates",
+	code: "US",
+	city: "",
+	continent: "",
+};
+
+export const getUserCountry = async (): Promise<Country> => {
+	let userCountry: Country = DEFAULT_COUNTRY;
+
+	try {
+		const response = await fetch(`https://api.ipinfo.io/lite/me?token=${process.env.IPINFO_TOKEN}`);
+
+		if (!response.ok) throw new Error("There is a problem");
+
+		const data = await response.json();
+
+		userCountry = {
+			name: data.name,
+			code: data.country_code,
+			continent: data.continent,
+			city: countries.find((c) => c.code === data.country_code)?.city || "",
+		};
+	} catch (error) {
+		console.error(error);
+	}
+
+	return userCountry;
 };

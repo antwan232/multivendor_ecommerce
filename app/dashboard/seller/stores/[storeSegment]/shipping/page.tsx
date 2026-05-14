@@ -1,8 +1,13 @@
+// Server Actions
 import { getStoreDefaultShippingDetails, getStoreShippingRates } from "@/actions/store";
-import StoreDefaultShippingDetails from "@/components/dashboard/forms/store-default-shipping-details.client";
+
+// Components
+import StoreDefaultShippingDetails from "@/components/dashboard/forms/store-default-shipping-details";
 import DataTable from "@/components/ui/data-table";
+import { columns } from "@/components/dashboard/columns/shipping-columns";
+
+// Next
 import { redirect } from "next/navigation";
-import { columns } from "./columns";
 
 export default async function SellerStoreShippingPage({
 	params,

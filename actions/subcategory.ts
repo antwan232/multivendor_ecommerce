@@ -6,6 +6,8 @@ import prisma from "@/lib/prisma";
 
 // Clerk
 import { currentUser } from "@clerk/nextjs/server";
+
+// next
 import { cacheTag, updateTag } from "next/cache";
 
 export const upsertSubCategoryAction = async (subcategory: SubCategory) => {
@@ -51,8 +53,7 @@ export const upsertSubCategoryAction = async (subcategory: SubCategory) => {
 			update: subcategory,
 		});
 
-		updateTag("subCategories");
-		updateTag("categories");
+		updateTag("cats");
 		return subCategoryDetails;
 	} catch (error) {
 		console.log(error);
@@ -67,19 +68,39 @@ export const upsertSubCategoryAction = async (subcategory: SubCategory) => {
  * @param random Boolean indicating whether to return random subcategories.
  * @readonly
  * @returns List of subcategories based on the provided options. */
-export const getSubCategories = async () => {
-	"use cache";
-	cacheTag("cats");
+export const getSubCategories = async (
+	limit: number | null,
+	random: boolean = false,
+): Promise<SubCategory[]> => {
+	// Define SortOrder enum
+	enum SortOrder {
+		asc = "asc",
+		desc = "desc",
+	}
+	try {
+		// Define the query options
+		const queryOptions = {
+			take: limit || undefined, // Use the provided limit or undefined for no limit
+			orderBy: random ? { createdAt: SortOrder.desc } : undefined, // Use SortOrder for ordering
+		};
 
-	const subcategories = await prisma.subCategory.findMany({
-		include: {
-			category: true,
-		},
-		orderBy: {
-			updatedAt: "desc",
-		},
-	});
-	return subcategories;
+		// If random selection is required, use a raw query to randomize
+		if (random) {
+			const subcategories = await prisma.$queryRaw<SubCategory[]>`
+    SELECT * FROM SubCategory
+    ORDER BY RAND()
+    LIMIT ${limit || 10} 
+    `;
+			return subcategories;
+		} else {
+			// Otherwise, fetch subcategories based on the defined query options
+			const subcategories = await prisma.subCategory.findMany(queryOptions);
+			return subcategories;
+		}
+	} catch (error) {
+		// Log and re-throw any errors
+		throw error;
+	}
 };
 
 /**
@@ -147,4 +168,17 @@ export const getAllSubCategoriesOfCategory = async (categoryId: string) => {
 	});
 
 	return subCategory;
+};
+
+export const getAllSubCategories = async () => {
+	// Retrieve all subCategories from the database
+	const subCategories = await prisma.subCategory.findMany({
+		include: {
+			category: true,
+		},
+		orderBy: {
+			updatedAt: "desc",
+		},
+	});
+	return subCategories;
 };

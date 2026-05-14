@@ -1,15 +1,18 @@
-// Components
+// Server Actions
 import { getAllStores } from "@/actions/store";
 import { protectRoute } from "@/actions/user";
+
+// Components
 import Header from "@/components/dashboard/header";
-import NavLinks from "@/components/dashboard/sidebar/navLinks.client";
+import NavLinks from "@/components/dashboard/sidebar/navLinks";
 import Sidebar from "@/components/dashboard/sidebar/sidebar";
 import SidebarNav from "@/components/dashboard/sidebar/sidebar-nav";
-import StoreSwitcher from "@/components/dashboard/sidebar/store-switcher.client";
+import StoreSwitcher from "@/components/dashboard/sidebar/store-switcher";
 
 // Constants
 import { sellerDashboardSidebarOptions } from "@/constants/data";
 
+// React
 import { PropsWithChildren, Suspense } from "react";
 
 export default async function StoreDashboardLayout({ children }: PropsWithChildren) {

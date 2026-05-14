@@ -1,10 +1,15 @@
+// Server Actions
 import { getAllStoreProducts } from "@/actions/products";
-import DataTable from "@/components/ui/data-table";
-import { columns } from "./columns";
-import { Plus } from "lucide-react";
-import ProductDetails from "@/components/dashboard/forms/products-details.client";
 import { getCategories } from "@/actions/category";
 import { getAllOfferTags } from "@/actions/offerTag";
+
+// Components
+import DataTable from "@/components/ui/data-table";
+import { columns } from "@/components/dashboard/columns/products-columns";
+import ProductDetails from "@/components/dashboard/forms/products-details";
+
+// Lucide
+import { Plus } from "lucide-react";
 
 export default async function SellerProductsPage({
 	params,
@@ -14,14 +19,14 @@ export default async function SellerProductsPage({
 	const { storeSegment } = await params;
 	const products = await getAllStoreProducts(storeSegment);
 	const categories = await getCategories();
-	const offerTags = await getAllOfferTags();
+	const offerTags = await getAllOfferTags(storeSegment);
 
 	return (
 		<DataTable
 			actionButtonText={
 				<>
 					<Plus size={15} />
-					Create category
+					Create product
 				</>
 			}
 			modalChildren={
@@ -38,4 +43,4 @@ export default async function SellerProductsPage({
 			searchPlaceholder="Search product name..."
 		/>
 	);
-} 
+}

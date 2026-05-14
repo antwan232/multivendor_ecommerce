@@ -3,21 +3,19 @@ import { cacheTag } from "next/cache";
 
 // Server actions
 import { getCategories } from "@/actions/category";
-import { getSubCategories } from "@/actions/subcategory";
 
 // Components
-import SubCategoryDetails from "@/components/dashboard/forms/sub-category-details.client";
+import SubCategoryDetails from "@/components/dashboard/forms/sub-category-details";
 import DataTable from "@/components/ui/data-table";
 import { Plus } from "lucide-react";
-
-// Columns
-import { columns } from "../../../../components/dashboard/columns/sub-categories-columns.client";
+import { columns } from "@/components/dashboard/columns/sub-categories-columns";
+import { getAllSubCategories } from "@/actions/subcategory";
 
 export default async function SubCategoriesAdminPage() {
 	"use cache";
 	cacheTag("cats");
 
-	const subCategories = await getSubCategories();
+	const subCategories = await getAllSubCategories();
 	const categories = await getCategories();
 	if (subCategories.length === 0 || categories.length === 0) return;
 

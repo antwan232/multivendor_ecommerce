@@ -1,10 +1,18 @@
 "use server";
-
+ // Prisma
 import prisma from "@/lib/prisma";
+
+// Types
 import { PrismaModelMap, ProductWithVariantType } from "@/lib/types";
-import { currentUser } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
+
+// Clerk
+import { currentUser } from "@clerk/nextjs/server";
+
+// Next
 import { cacheTag, updateTag } from "next/cache";
+
+// Lib
 import slugify from "slugify";
 
 /**
@@ -274,9 +282,10 @@ export const getAllStoreProducts = async (storeSegment: string) => {
 		include: {
 			category: true,
 			subCategory: true,
+			offerTag: true,
 			productVariants: {
 				include: {
-					images: true,
+					images: { orderBy: { createdAt: "asc" } },
 					colors: true,
 					sizes: true,
 				},

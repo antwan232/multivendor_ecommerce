@@ -1,8 +1,8 @@
 // Server actions
 import { getAllStores } from "@/actions/store";
-import { currentUser } from "@clerk/nextjs/server";
 
-// Next.js
+// Next
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect, RedirectType } from "next/navigation";
 
 export default async function SellerDashboard() {

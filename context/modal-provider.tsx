@@ -1,7 +1,7 @@
 "use client";
 
 // React, Next.js
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 // Prisma models
 import { User } from "@/lib/generated/prisma/client";

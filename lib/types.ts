@@ -1,8 +1,12 @@
 import { getAllStoreProducts } from "@/actions/products";
-import { getSubCategories } from "@/actions/subcategory";
+import { getStoreDefaultShippingDetails } from "@/actions/store";
+import { getAllSubCategories } from "@/actions/subcategory";
+import countries from "@/data/countries.json";
 import { PromiseReturnType } from "@prisma/client";
 import { ShippingFeeMethod } from "./generated/prisma/enums";
-import { getStoreDefaultShippingDetails } from "@/actions/store";
+
+import { User } from "@clerk/nextjs/server";
+import { Color, Size } from "@tremor/react";
 import {
 	Category,
 	OfferTag,
@@ -15,8 +19,6 @@ import {
 	Store,
 	SubCategory,
 } from "./generated/prisma/client";
-import { Color, Size } from "@tremor/react";
-import { User } from "@clerk/nextjs/server";
 
 export interface DashboardSidebarMenuInterface {
 	label: string;
@@ -24,7 +26,7 @@ export interface DashboardSidebarMenuInterface {
 	link: string;
 }
 
-export type SubCategoryWithCategoryType = PromiseReturnType<typeof getSubCategories>[0];
+export type SubCategoryWithCategoryType = PromiseReturnType<typeof getAllSubCategories>[0];
 
 // Product + variant
 export type ProductWithVariantType = {
@@ -93,3 +95,12 @@ export type CountryWithShippingRatesType = {
 	countryName: string;
 	shippingRate: ShippingRate;
 };
+
+export interface Country {
+	name: string;
+	code: string;
+	continent: string;
+	city: string;
+}
+
+export type SelectMenuOption = (typeof countries)[number]
