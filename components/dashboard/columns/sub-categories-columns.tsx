@@ -18,8 +18,7 @@ import {
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
+	AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,8 +26,7 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
+	DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
 // Hooks and utilities
@@ -36,11 +34,11 @@ import { useModal } from "@/context/modal-provider";
 import { toast } from "sonner";
 
 // Server actions
-import { deleteSubCategory, getSubCategory } from "@/actions/subcategory";
 import { getCategories } from "@/actions/category";
+import { deleteSubCategory, getSubCategory } from "@/actions/subcategory";
 
 // Lucide icons
-import { BadgeCheck, BadgeMinus, Edit, MoreHorizontal, Trash } from "lucide-react";
+import { BadgeCheck, BadgeMinus, Edit, MoreHorizontal } from "lucide-react";
 
 // Tanstack React Table
 import { ColumnDef } from "@tanstack/react-table";
@@ -161,14 +159,6 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
 						<Edit size={15} />
 						Edit Details
 					</DropdownMenuItem>
-					<DropdownMenuSeparator />
-					<AlertDialogTrigger asChild>
-						<DropdownMenuItem
-							className="flex gap-2"
-							onClick={() => {}}>
-							<Trash size={15} /> Delete sub-category
-						</DropdownMenuItem>
-					</AlertDialogTrigger>
 				</DropdownMenuContent>
 			</DropdownMenu>
 			<AlertDialogContent className="max-w-lg">

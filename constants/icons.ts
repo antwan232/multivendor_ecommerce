@@ -1,4 +1,18 @@
-import { BoxesIcon, BoxListIcon, CategoriesIcon, CreateStoreIcon, DashboardIcon, StoreIcon, SettingsIcon, ThreeBoxesIcon, ProductsIcon, InventoryIcon, CouponIcon, ShippingIcon, OfferIcon } from "@/components/dashboard/icons";
+import {
+	BoxesIcon,
+	BoxListIcon,
+	CategoriesIcon,
+	CreateStoreIcon,
+	DashboardIcon,
+	StoreIcon,
+	SettingsIcon,
+	ThreeBoxesIcon,
+	ProductsIcon,
+	InventoryIcon,
+	CouponIcon,
+	ShippingIcon,
+	OfferIcon,
+} from "@/components/dashboard/icons";
 
 export const icons = [
 	{
