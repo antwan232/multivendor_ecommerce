@@ -1,8 +1,5 @@
 "use client";
 
-// Next.js
-import { useRouter } from "next/navigation";
-
 // Prisma models
 import { Store } from "@/lib/generated/prisma/client";
 
@@ -38,8 +35,6 @@ interface StoreDetailsProps {
 }
 
 export default function StoreDetails({ data }: StoreDetailsProps) {
-	const router = useRouter();
-
 	// Form hook for managing controlled form state and validation
 	const form = useForm<z.infer<typeof StoreFormSchema>>({
 		mode: "onChange",
@@ -87,9 +82,6 @@ export default function StoreDetails({ data }: StoreDetailsProps) {
 			);
 
 			form.reset({ ...values });
-
-			// Redirect or Refresh data
-			router.push(`/dashboard/seller/stores/${values.url}`);
 		} catch (error: any) {
 			// Handling form submission errors from the backend
 			toast.error("Oops!", { description: error.toString() });

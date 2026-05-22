@@ -1,4 +1,4 @@
-import { getAllStoreProducts } from "@/actions/products";
+import { getAllStoreProducts, getProducts } from "@/actions/products";
 import { getStoreDefaultShippingDetails } from "@/actions/store";
 import { getAllSubCategories } from "@/actions/subcategory";
 import countries from "@/data/countries.json";
@@ -6,15 +6,17 @@ import { PromiseReturnType } from "@prisma/client";
 import { ShippingFeeMethod } from "./generated/prisma/enums";
 
 import { User } from "@clerk/nextjs/server";
-import { Color, Size } from "@tremor/react";
+
 import {
 	Category,
+	Color,
 	OfferTag,
 	Product,
 	ProductVariant,
 	ProductVariantImage,
 	Question,
 	ShippingRate,
+	Size,
 	Spec,
 	Store,
 	SubCategory,
@@ -103,4 +105,12 @@ export interface Country {
 	city: string;
 }
 
-export type SelectMenuOption = (typeof countries)[number]
+export type SelectMenuOption = (typeof countries)[number];
+
+export type VariantImageType = {
+	url: string;
+	image: string;
+};
+
+export type ProductType = PromiseReturnType<typeof getProducts>["products"][0];
+

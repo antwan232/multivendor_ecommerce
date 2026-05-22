@@ -151,12 +151,12 @@ model ProductVariant {
   variantDescription String? @db.LongText
   variantImage       String
   slug               String  @unique
+  sales              Int     @default(0)
 
   isSale      Boolean @default(false)
   saleEndDate String?
-
-  keywords String
-  sku      String
+  keywords    String
+  sku         String
 
   productId String
   products  Product @relation("ProductToProductVariant", fields: [productId], references: [id])
@@ -292,4 +292,3 @@ model ShippingRate {
   @@index([countryId])
   @@index([storeId])
 }
-

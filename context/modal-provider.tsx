@@ -17,14 +17,14 @@ export type ModalData = {
 type ModalContextType = {
 	data: ModalData;
 	isOpen: boolean;
-	setOpen: (modal: React.ReactNode, fetchData?: () => Promise<any>) => void;
+	setOpen: (modal: React.ReactNode, rowData?: any) => void;
 	setClose: () => void;
 };
 
 export const ModalContext = createContext<ModalContextType>({
 	data: {},
 	isOpen: false,
-	setOpen: (modal: React.ReactNode, fetchData?: () => Promise<any>) => {},
+	setOpen: () => {},
 	setClose: () => {},
 });
 
@@ -32,15 +32,10 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [data, setData] = useState<ModalData>({});
 	const [showingModal, setShowingModal] = useState<React.ReactNode>(null);
-	const [isMounted, setIsMounted] = useState(false);
 
-	if (!isMounted) setIsMounted(true);
-
-	const setOpen = async (modal: React.ReactNode, fetchData?: () => Promise<any>) => {
+	const setOpen = async (modal: React.ReactNode, rowData: any) => {
 		if (modal) {
-			if (fetchData) {
-				setData({ ...data, ...(await fetchData()) });
-			}
+			setData({ ...data, ...rowData });
 			setShowingModal(modal);
 			setIsOpen(true);
 		}
@@ -50,8 +45,6 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 		setIsOpen(false);
 		setData({});
 	};
-
-	if (!isMounted) return null;
 
 	return (
 		<ModalContext.Provider value={{ data, setOpen, setClose, isOpen }}>

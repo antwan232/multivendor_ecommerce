@@ -1,5 +1,6 @@
 "use server";
- // Prisma
+
+// Prisma
 import prisma from "@/lib/prisma";
 
 // Types
@@ -334,4 +335,91 @@ export const deleteProduct = async (productId: string) => {
 	updateTag(`products-${store?.url}`);
 
 	return response;
+};
+
+/**
+ * @function getProducts
+ * @description Retrieves products based on various filters and returns only variants that match the filters. Supports pagination.
+ * @access Public
+ * @param filters An object containing filter options (category, subCategory, offerTag, size, onSale, onDiscount, brand, color).
+ * @param sortBy Sort the filtered results (Most popular, New Arivals, Top Rated...).
+ * @param page The current page number for pagination (default = 1).
+ * @param pageSize The number of products per page (default = 10).
+ * @returns An object containing paginated products, filtered variants, and pagination metadata (totalPages, currentPage, pageSize, totalCount).
+ */
+
+export const getProducts = async (filters = {}, sortBy = "", page = 1, pageSize = 10) => {
+	// Default values for page and pageSize
+	const currentPage = page;
+	const limit = pageSize;
+	const skip = (currentPage - 1) * limit;
+
+	// Construct the base query
+	const whereClause: any = {
+		AND: [],
+	};
+
+	// Get all filtered, sorted products
+	const products = await prisma.product.findMany({
+		where: whereClause,
+		take: limit,
+		skip,
+		include: {
+			productVariants: {
+				include: {
+					sizes: true,
+					images: true,
+					colors: true,
+				},
+			},
+		},
+	});
+
+	// Transform the filtered variants into the VariantSimplified structure
+	const productWithFilteredVariants = products.map((product) => {
+		// Filter the variants based on the filters
+		const filteredVariants = product.productVariants;
+
+		// Transform the filtered variants into the VariantSimplified structure
+		const variants = filteredVariants.map((variant) => ({
+			variantId: variant.productId,
+			variantSlug: variant.slug,
+			variantName: variant.variantName,
+			images: variant.images,
+			sizes: variant.sizes,
+		}));
+
+		// Extract variant images for the product
+		const variantImages = filteredVariants.map((variant) => ({
+			url: `/product/${product.slug}/${variant.slug}`,
+			image: variant.variantImage ? variant.variantImage : variant.images[0].url,
+		}));
+
+		// Return the product in the ProductCardType structure
+		return {
+			id: product.id,
+			slug: product.slug,
+			name: product.name,
+			rating: product.rating,
+			sales: product.sales,
+			numReviews: product.numReviews,
+			variants,
+			variantImages,
+		};
+	});
+
+	// Retrieve products matching the filters
+	const totalCount = products.length;
+
+	// Calculate total pages
+	const totalPages = Math.ceil(totalCount / pageSize);
+
+	// Return the paginated data along with metadata
+	return {
+		products: productWithFilteredVariants,
+		totalPages,
+		currentPage,
+		pageSize,
+		totalCount,
+	};
 };

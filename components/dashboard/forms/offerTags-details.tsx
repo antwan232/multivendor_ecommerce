@@ -1,8 +1,7 @@
 "use client";
 
 // React & Next
-import { FC } from "react";
-import { useRouter } from "next/navigation";
+import { FC, useState } from "react";
 
 // Prisma model
 import { OfferTag } from "@/lib/generated/prisma/client";
@@ -19,8 +18,8 @@ import { OfferTagFormSchema } from "@/lib/schemas";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Field, FieldError, FieldGroup } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 // Server Actions
 import { upsertOfferTag } from "@/actions/offerTag";
@@ -34,7 +33,9 @@ interface OfferTagDetailsProps {
 }
 
 const OfferTagDetails: FC<OfferTagDetailsProps> = ({ data }) => {
-	const router = useRouter();
+	const [isCreated, setIsCreated] = useState(false);
+	const [id] = useState(v4());
+
 
 	const form = useForm<z.infer<typeof OfferTagFormSchema>>({
 		mode: "onChange",
@@ -55,7 +56,7 @@ const OfferTagDetails: FC<OfferTagDetailsProps> = ({ data }) => {
 		try {
 			// Upserting category data
 			const response = await upsertOfferTag({
-				id: data?.id ? data.id : v4(),
+				id: data?.id ? data.id : id,
 				name: values.name,
 				url: values.url,
 				createdAt: new Date(),
@@ -71,12 +72,7 @@ const OfferTagDetails: FC<OfferTagDetailsProps> = ({ data }) => {
 					: `Congratulations! '${response?.name}' is now created.`,
 			);
 
-			// Redirect or Refresh data
-			if (data?.id) {
-				router.refresh();
-			} else {
-				router.push("/dashboard/admin/offer-tags");
-			}
+			if (!data?.id) setIsCreated(true);
 		} catch (error: any) {
 			// Handling form submission errors from the backend
 			toast.error("Oops!", { description: error.toString() });
@@ -133,14 +129,16 @@ const OfferTagDetails: FC<OfferTagDetailsProps> = ({ data }) => {
 							<Button
 								className="flex justify-start w-fit"
 								type="submit"
-								disabled={data?.id ? (isFieldsNotUpdated ? true : isSubmitting) : isSubmitting}>
+								disabled={
+									data?.id || isCreated ? (isFieldsNotUpdated ? true : isSubmitting) : isSubmitting
+								}>
 								{isSubmitting
 									? data?.id
 										? "updating..."
 										: "creating..."
-									: data?.id
-										? "Save offer tag information"
-										: "Create offer tag"}
+									: data?.id || isCreated
+										? "Save offer-tag information"
+										: "Create offer-tag"}
 							</Button>
 						</FieldGroup>
 					</form>

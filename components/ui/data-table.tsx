@@ -6,7 +6,6 @@ import Link from "next/link";
 // Custom components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import CustomModal from "../dashboard/shared/custom-modal";
 
 // Table components
 import {
@@ -32,24 +31,24 @@ import { FilePlus2, Search } from "lucide-react";
 
 // Modal provider hook
 import { useModal } from "@/context/modal-provider";
+import CustomModal from "../dashboard/shared/custom-modal";
 
 // Props interface for the table component
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
-	data: TData[];
 	filterValue: string;
 	actionButtonText?: React.ReactNode;
 	modalChildren?: React.ReactNode;
 	newTabLink?: string;
 	searchPlaceholder: string;
 	heading?: string;
+	data: TData[];
 	subheading?: string;
 	noHeader?: true;
 }
 
 export default function DataTable<TData, TValue>({
 	columns,
-	data,
 	filterValue,
 	modalChildren,
 	actionButtonText,
@@ -57,9 +56,9 @@ export default function DataTable<TData, TValue>({
 	heading,
 	subheading,
 	noHeader,
+	data,
 	newTabLink,
 }: DataTableProps<TData, TValue>) {
-	// Modal state
 	const { setOpen } = useModal();
 
 	// React table instance

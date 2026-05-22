@@ -1,7 +1,6 @@
 "use client";
 
 // Next.js
-import { useRouter } from "next/navigation";
 
 // Prisma models
 import { Category } from "@/lib/generated/prisma/browser";
@@ -29,6 +28,7 @@ import ImageUpload from "../shared/image-upload";
 import { upsertCategoryAction } from "@/actions/category";
 
 // libs
+import { useState } from "react";
 import { toast } from "sonner";
 import { v4 } from "uuid";
 
@@ -37,7 +37,8 @@ interface CategoryDetailsProps {
 }
 
 export default function CategoryDetails({ data }: CategoryDetailsProps) {
-	const router = useRouter();
+	const [isCreated, setIsCreated] = useState(false);
+	const [id] = useState(v4());
 
 	// Form hook for managing controlled form state and validation
 	const form = useForm<z.infer<typeof CategoryFormSchema>>({
@@ -59,32 +60,29 @@ export default function CategoryDetails({ data }: CategoryDetailsProps) {
 
 	const onSubmit = async (values: z.infer<typeof CategoryFormSchema>) => {
 		try {
-			// Upserting category data
-			const response = await upsertCategoryAction({
-				id: data?.id ? data.id : v4(),
+			const newData = {
+				id: data?.id ? data.id : id,
 				name: values.name,
-				image: data?.image ? data?.image : values.image[0].url,
+				image: values.image ? values.image[0].url : data?.image ? data?.image : "",
 				url: values.url,
 				featured: values.featured,
 				createdAt: new Date(),
 				updatedAt: new Date(),
-			});
+			};
+
+			// Upserting category data
+			const response = await upsertCategoryAction(newData);
 
 			// Displaying success message
 			toast.success(
-				data?.id
+				data?.id || isCreated
 					? "Category has been updated."
-					: `Congratulations! '${response?.name}' is now created.`,
+					: `Congratulations! '${response.name}' is now created.`,
 			);
 
-			form.reset({ ...values });
+			if (!data?.id) setIsCreated(true);
 
-			// Redirect or Refresh data
-			if (data?.id) {
-				router.refresh();
-			} else {
-				router.push("/dashboard/admin/categories");
-			}
+			form.reset({ ...values });
 		} catch (error: any) {
 			// Handling form submission errors from the backend
 			toast.error("Oops!", { description: error.toString() });
@@ -189,12 +187,14 @@ export default function CategoryDetails({ data }: CategoryDetailsProps) {
 							<Button
 								className="flex justify-start w-fit"
 								type="submit"
-								disabled={data?.id ? (isFieldsNotUpdated ? true : isSubmitting) : isSubmitting}>
+								disabled={
+									data?.id || isCreated ? (isFieldsNotUpdated ? true : isSubmitting) : isSubmitting
+								}>
 								{isSubmitting
 									? data?.id
 										? "updating..."
 										: "creating..."
-									: data?.id
+									: data?.id || isCreated
 										? "Save category information"
 										: "Create category"}
 							</Button>

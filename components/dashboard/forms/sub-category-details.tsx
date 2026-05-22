@@ -1,8 +1,5 @@
 "use client";
 
-// Next.js
-import { useRouter } from "next/navigation";
-
 // Prisma models
 import { SubCategory } from "@/lib/generated/prisma/browser";
 import { Category } from "@/lib/generated/prisma/client";
@@ -37,6 +34,7 @@ import {
 import ImageUpload from "../shared/image-upload";
 
 // Utils
+import { useState } from "react";
 import { toast } from "sonner";
 import { v4 } from "uuid";
 interface SubCategoryDetailsProps {
@@ -45,7 +43,8 @@ interface SubCategoryDetailsProps {
 }
 
 export default function SubCategoryDetails({ data, categories }: SubCategoryDetailsProps) {
-	const router = useRouter();
+	const [isCreated, setIsCreated] = useState(false);
+	const [id] = useState(v4());
 
 	// Form hook for managing controlled form state and validation
 	const form = useForm<z.infer<typeof SubCategoryFormSchema>>({
@@ -70,9 +69,9 @@ export default function SubCategoryDetails({ data, categories }: SubCategoryDeta
 		try {
 			// Upserting category data
 			const response = await upsertSubCategoryAction({
-				id: data?.id ? data.id : v4(),
+				id: data?.id ? data.id : id,
 				name: values.name,
-				image: data?.image ? data?.image : values.image[0].url,
+				image: values.image ? values.image[0].url : data?.image ? data?.image : "",
 				url: values.url,
 				featured: values.featured,
 				createdAt: new Date(),
@@ -89,21 +88,12 @@ export default function SubCategoryDetails({ data, categories }: SubCategoryDeta
 					: `Congratulations! '${response?.name}' is now created.`,
 			);
 
-			// Redirect or Refresh data
-			if (data?.id) {
-				router.refresh();
-			} else {
-				router.push("/dashboard/admin/sub-categories");
-			}
+			if (!data?.id) setIsCreated(true);
 		} catch (error: any) {
 			// Handling form submission errors from the backend
 			toast.error("Oops!", { description: error.toString() });
 		}
 	};
-
-	// const subCategoryId = data?.id ?? v4();
-
-	// const relatedCategory = categories.filter((cat) => cat.id === subCategoryId);
 
 	return (
 		<AlertDialog>
@@ -240,12 +230,14 @@ export default function SubCategoryDetails({ data, categories }: SubCategoryDeta
 							<Button
 								className="flex justify-start w-fit"
 								type="submit"
-								disabled={data?.id ? (isFieldsNotUpdated ? true : isSubmitting) : isSubmitting}>
+								disabled={
+									data?.id || isCreated ? (isFieldsNotUpdated ? true : isSubmitting) : isSubmitting
+								}>
 								{isSubmitting
 									? data?.id
 										? "updating..."
 										: "creating..."
-									: data?.id
+									: data?.id || isCreated
 										? "Save sub-category information"
 										: "Create sub-category"}
 							</Button>

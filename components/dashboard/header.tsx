@@ -1,5 +1,11 @@
 "use client";
-import { UserButton } from "@clerk/nextjs";
+
+// Clerk
+const UserButton = dynamic(() => import("@clerk/nextjs").then((mod) => mod.UserButton), {
+	ssr: false,
+});
+
+import dynamic from "next/dynamic";
 import ThemeToggle from "../ui/shared/theme-toggle";
 
 export default function Header() {

@@ -1,13 +1,11 @@
 "use client";
 
 // React, Next.js imports
-import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 // Custom components
-import CustomModal from "@/components/dashboard/shared/custom-modal";
-import CategoryDetails from "@/components/dashboard/forms/category-details";
+import CustomModal from "../shared/custom-modal";
+import CategoryDetails from "../forms/category-details";
 
 // UI components
 import {
@@ -36,7 +34,8 @@ import { useModal } from "@/context/modal-provider";
 import { toast } from "sonner";
 
 // Server actions
-import { deleteCategory, getCategory } from "@/actions/category";
+import { deleteCategory } from "@/actions/category";
+import { getCategories } from "@/actions/category";
 
 // Lucide icons
 import { BadgeCheck, BadgeMinus, Edit, MoreHorizontal, Trash } from "lucide-react";
@@ -45,9 +44,9 @@ import { BadgeCheck, BadgeMinus, Edit, MoreHorizontal, Trash } from "lucide-reac
 import { ColumnDef } from "@tanstack/react-table";
 
 // Prisma
-import { Category } from "@/lib/generated/prisma/client";
+import { PromiseReturnType } from "@prisma/client";
 
-export const columns: ColumnDef<Category>[] = [
+export const columns: ColumnDef<PromiseReturnType<typeof getCategories>[0]>[] = [
 	{
 		accessorKey: "image",
 		header: "",
@@ -101,15 +100,13 @@ export const columns: ColumnDef<Category>[] = [
 	},
 ];
 interface CellActionsProps {
-	rowData: Category;
+	rowData: PromiseReturnType<typeof getCategories>[0];
 }
 
 // CellActions component definition
 const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
 	// Hooks
 	const { setOpen, setClose } = useModal();
-	const [loading, setLoading] = useState(false);
-	const router = useRouter();
 
 	// Return null if rowData or rowData.id don't exist
 	if (!rowData || !rowData.id) return null;
@@ -132,22 +129,25 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
 						onClick={() => {
 							setOpen(
 								<CustomModal>
-									<CategoryDetails data={{ ...rowData }} />
+									<CategoryDetails data={rowData} />
 								</CustomModal>,
-								async () => ({ rowData: await getCategory(rowData?.id) }),
 							);
 						}}>
 						<Edit size={15} />
 						Edit Details
 					</DropdownMenuItem>
-					<DropdownMenuSeparator />
-					<AlertDialogTrigger asChild>
-						<DropdownMenuItem
-							className="flex gap-2"
-							onClick={() => {}}>
-							<Trash size={15} /> Delete category
-						</DropdownMenuItem>
-					</AlertDialogTrigger>
+					{[...rowData.subCategories, ...rowData.products].length === 0 && (
+						<>
+							<DropdownMenuSeparator />
+							<AlertDialogTrigger asChild>
+								<DropdownMenuItem
+									className="flex gap-2"
+									onClick={() => {}}>
+									<Trash size={15} /> Delete category
+								</DropdownMenuItem>
+							</AlertDialogTrigger>
+						</>
+					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
 			<AlertDialogContent className="max-w-lg">
@@ -161,16 +161,12 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
 				<AlertDialogFooter className="flex items-center">
 					<AlertDialogCancel className="mb-2">Cancel</AlertDialogCancel>
 					<AlertDialogAction
-						disabled={loading}
 						className="bg-destructive hover:bg-destructive mb-2 text-white"
 						onClick={async () => {
-							setLoading(true);
 							await deleteCategory(rowData.id);
 							toast("Deleted category", {
 								description: "The category has been deleted.",
 							});
-							setLoading(false);
-							router.refresh();
 							setClose();
 						}}>
 						Delete

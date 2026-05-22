@@ -166,7 +166,7 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
 						<DropdownMenuItem
 							className="flex gap-2"
 							onClick={() => {}}>
-							<Trash size={15} /> Delete category
+							<Trash size={15} /> Delete sub-category
 						</DropdownMenuItem>
 					</AlertDialogTrigger>
 				</DropdownMenuContent>
@@ -175,7 +175,7 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
 				<AlertDialogHeader>
 					<AlertDialogTitle className="text-left">Are you absolutely sure?</AlertDialogTitle>
 					<AlertDialogDescription className="text-left">
-						This action cannot be undone. This will permanently delete the category and related
+						This action cannot be undone. This will permanently delete the sub-category and related
 						data.
 					</AlertDialogDescription>
 				</AlertDialogHeader>
@@ -187,7 +187,7 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
 						onClick={async () => {
 							setLoading(true);
 							await deleteSubCategory(rowData.id);
-							toast("Deleted category", {
+							toast("Deleted sub-category", {
 								description: "The category has been deleted.",
 							});
 							setLoading(false);

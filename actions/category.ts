@@ -86,6 +86,10 @@ export const getCategories = async () => {
 		orderBy: {
 			updatedAt: "desc",
 		},
+		include: {
+			subCategories: true,
+			products: true,
+		},
 	});
 
 	return categories;
@@ -100,26 +104,30 @@ export const getCategories = async () => {
  * @returns Response indicating success or failure of the deletion operation.
  */
 export const deleteCategory = async (categoryId: string) => {
-	// Check if the user is AHUTHENTICATED
-	const user = await currentUser();
-	if (!user) throw new Error("Unauthenticated.");
+	try {
+		// Check if the user is AHUTHENTICATED
+		const user = await currentUser();
+		if (!user) throw new Error("Unauthenticated.");
 
-	// Check for AUTHORIZATION
-	if (user.privateMetadata.role !== "ADMIN")
-		throw new Error("Unauthorized Access: Admin Privileges Required for Entry.");
+		// Check for AUTHORIZATION
+		if (user.privateMetadata.role !== "ADMIN")
+			throw new Error("Unauthorized Access: Admin Privileges Required for Entry.");
 
-	// Ensure category ID is provided
-	if (!categoryId) throw new Error("Please provide category ID.");
+		// Ensure category ID is provided
+		if (!categoryId) throw new Error("Please provide category ID.");
 
-	// Delete category from the database
-	const response = await prisma.category.delete({
-		where: {
-			id: categoryId,
-		},
-	});
+		// Delete category from the database
+		const response = await prisma.category.delete({
+			where: {
+				id: categoryId,
+			},
+		});
 
-	updateTag("cats");
-	return response;
+		updateTag("cats");
+		return response;
+	} catch (error) {
+		throw error;
+	}
 };
 
 /**

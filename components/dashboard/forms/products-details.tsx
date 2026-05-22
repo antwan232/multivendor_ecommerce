@@ -1,7 +1,7 @@
 "use client";
 
 // React & Next.js
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 // React datetime-picker
@@ -55,7 +55,6 @@ import { getAllSubCategoriesOfCategory } from "@/actions/subcategory";
 
 // Types
 import { ProductWithVariantType } from "@/lib/types";
-
 interface ProductDetailsProps {
 	data?: Partial<ProductWithVariantType>;
 	storeSegment: string;
@@ -79,7 +78,7 @@ export default function ProductDetails({
 	offerTags,
 }: ProductDetailsProps) {
 	// RCC Hooks
-	const router = useRouter();
+	const [isCreated, setIsCreated] = useState(false);
 	const pathname = usePathname();
 
 	// Refs for Jodit editor
@@ -92,7 +91,6 @@ export default function ProductDetails({
 	const [tempImages, setTempImages] = useState<{ url: string }[]>([]);
 
 	// ClickToAdd states
-
 	// 1) colors
 	const [colors, setColors] = useState<{ color: string }[]>([{ color: "" }]);
 
@@ -114,6 +112,9 @@ export default function ProductDetails({
 		data?.questions ?? [{ question: "", answer: "" }],
 	);
 
+	const [productId] = useState(v4());
+	const [variantId] = useState(v4());
+
 	// Handler Functions
 	const handleAddKeyword = (tag: Tag) => {
 		if (keywords.length === 10) return;
@@ -128,6 +129,7 @@ export default function ProductDetails({
 	// Form hook for managing controlled form state and validation
 	const form = useForm<ProductFormValues>({
 		mode: "onChange",
+		reValidateMode: "onChange",
 		resolver: zodResolver(ProductFormSchema),
 		defaultValues: {
 			name: data?.name ?? "",
@@ -177,14 +179,16 @@ export default function ProductDetails({
 		pathname
 			.split("/")
 			.filter((word) => word === "variants")
-			?.join();
+			?.join().length
+			? true
+			: false;
 
 	const onSubmit: SubmitHandler<ProductFormValues> = async (values) => {
 		try {
 			const response = await upsertProductAction(
 				{
-					productId: data?.productId ? data.productId : v4(),
-					variantId: data?.variantId ? data.variantId : v4(),
+					productId: data?.productId ? data.productId : productId,
+					variantId: data?.variantId ? data.variantId : variantId,
 					name: values.name,
 					description: values.description,
 					variantName: values.variantName,
@@ -222,32 +226,11 @@ export default function ProductDetails({
 
 			form.reset({ ...values });
 
-			router.push(`/dashboard/seller/stores/${storeSegment}/products`);
+			if (!data?.productId) setIsCreated(true);
 		} catch (error: any) {
 			toast.error("Oops!", { description: error.toString() });
 		}
 	};
-
-	// SYNC form state when states changes
-	useEffect(() => {
-		form.setValue("colors", colors);
-	}, [colors, form]);
-
-	useEffect(() => {
-		form.setValue("sizes", sizes);
-	}, [sizes, form]);
-
-	useEffect(() => {
-		form.setValue("keywords", keywords);
-	}, [keywords, form]);
-
-	useEffect(() => {
-		form.setValue("product_specs", productSpecs);
-	}, [productSpecs, form]);
-
-	useEffect(() => {
-		form.setValue("variant_specs", variantSpecs);
-	}, [variantSpecs, form]);
 
 	return (
 		<AlertDialog>
@@ -377,13 +360,13 @@ export default function ProductDetails({
 									<Controller
 										name="description"
 										control={form.control}
-										render={({ fieldState }) => (
+										render={({ fieldState, field }) => (
 											<Field data-invalid={fieldState.invalid}>
 												<JoditEditor
 													ref={productDecEditor}
 													value={form.getValues().description}
 													onChange={(content) => {
-														form.setValue("description", content);
+														field.onChange(content);
 													}}
 												/>
 												<FieldError errors={[fieldState.error]} />
@@ -760,19 +743,19 @@ export default function ProductDetails({
 								className="flex justify-start w-fit"
 								type="submit"
 								disabled={
-									data?.productId ? (isFieldsNotUpdated ? true : isSubmitting) : isSubmitting
+									data?.productId || isCreated
+										? isFieldsNotUpdated
+											? true
+											: isSubmitting
+										: isSubmitting
 								}>
 								{isSubmitting
 									? data?.productId
 										? "updating..."
 										: "creating..."
-									: data?.productId
-										? isVariant
-											? "Create variant"
-											: data?.productId
-												? "Update product"
-												: "Create product"
-										: "Create product"}
+									: data?.productId || isCreated
+										? "Save products information"
+										: "Create products"}
 							</Button>
 						</FieldGroup>
 					</form>

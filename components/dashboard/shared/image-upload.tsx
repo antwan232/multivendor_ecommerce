@@ -1,8 +1,8 @@
 "use client";
 
 // React, Next.js
-import { FC, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { FC, useEffect, useState } from "react";
 
 // Cloudinary
 import { CldUploadWidget } from "next-cloudinary";
@@ -39,7 +39,6 @@ const ImageUpload: FC<ImageUploadProps> = ({
 	error,
 	className = "",
 }) => {
-	const isMounted = useRef(false);
 
 	const [isBouncing, setIsBouncing] = useState(false);
 
@@ -55,12 +54,6 @@ const ImageUpload: FC<ImageUploadProps> = ({
 			return () => clearTimeout(timer);
 		}
 	}, [error]);
-
-	useEffect(() => {
-		if (!isMounted.current) {
-			isMounted.current = true;
-		}
-	}, []);
 
 	const onUpload = (result: any) => {
 		onChange(result.info.secure_url);

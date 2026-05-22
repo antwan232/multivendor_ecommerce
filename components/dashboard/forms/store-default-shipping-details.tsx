@@ -1,8 +1,5 @@
 "use client";
 
-// Next.js
-import { useRouter } from "next/navigation";
-
 // Form handling utilities
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -38,8 +35,6 @@ export default function StoreDefaultShippingDetails({
 	data,
 	storeUrl,
 }: StoreDefaultShippingDetailsProps) {
-	const router = useRouter();
-
 	// Form hook for managing controlled form state and validation
 	const form = useForm<z.infer<typeof StoreShippingFormSchema>>({
 		mode: "onChange",
@@ -83,9 +78,6 @@ export default function StoreDefaultShippingDetails({
 
 				// Refresh form data
 				form.reset(data);
-
-				// Refresh data
-				router.refresh();
 			}
 		} catch (error: any) {
 			// Handling form submission errors from the backend

@@ -1,8 +1,14 @@
-import { UserButton } from "@clerk/nextjs";
+
 import { currentUser } from "@clerk/nextjs/server";
 import { ChevronDown, Globe } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../../ui/button";
+import dynamic from "next/dynamic";
+
+// Clerk
+const UserButton = dynamic(() => import("@clerk/nextjs").then((mod) => mod.UserButton), {
+  ssr: false,
+});
 
 export default async function MinimalHeader() {
   const user = await currentUser();

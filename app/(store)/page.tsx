@@ -1,8 +1,13 @@
+"use client";
+
 // Theme provider component
 import ThemeToggle from "@/components/ui/shared/theme-toggle";
+import dynamic from "next/dynamic";
 
 // Clerk
-import { UserButton } from "@clerk/nextjs";
+const UserButton = dynamic(() => import("@clerk/nextjs").then((mod) => mod.UserButton), {
+	ssr: false,
+});
 
 export default function Home() {
 	return (

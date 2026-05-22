@@ -1,10 +1,9 @@
 "use client";
 
 // React & Next
-import { useRouter } from "next/navigation";
 import { FC } from "react";
 
-// Types 
+// Types
 import { CountryWithShippingRatesType } from "@/lib/types";
 
 // Form handling utilities
@@ -17,11 +16,11 @@ import { ShippingRateFormSchema } from "@/lib/schemas";
 
 // UI Components
 import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 // Actions
 import { upsertShippingRate } from "@/actions/store";
@@ -37,9 +36,6 @@ interface ShippingRateDetailsProps {
 }
 
 const ShippingRateDetails: FC<ShippingRateDetailsProps> = ({ data, storeUrl }) => {
-	// Initializing necessary hooks
-	const router = useRouter();
-
 	const form = useForm<z.infer<typeof ShippingRateFormSchema>>({
 		mode: "onChange",
 		resolver: zodResolver(ShippingRateFormSchema),
@@ -84,11 +80,8 @@ const ShippingRateDetails: FC<ShippingRateDetailsProps> = ({ data, storeUrl }) =
 
 			if (response.id) {
 				toast("Shipping rates updated sucessfully !");
-
-				form.reset({ ...values });
-
-				router.refresh();
 			}
+			form.reset({ ...values });
 		} catch (error: any) {
 			toast.error("Oops!", { description: error.toString() });
 		}

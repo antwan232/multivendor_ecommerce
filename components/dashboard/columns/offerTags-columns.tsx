@@ -86,6 +86,8 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
 	// Return null if rowData or rowData.id don't exist
 	if (!rowData || !rowData.id) return null;
 
+	
+
 	return (
 		<AlertDialog>
 			<DropdownMenu>
@@ -139,7 +141,7 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
 						onClick={async () => {
 							setLoading(true);
 							await deleteOfferTag(rowData.id);
-							toast.success("Deleted category", { description: "The category has been deleted." });
+							toast.success("Deleted offer-tag", { description: "The offer-tag has been deleted." });
 							setLoading(false);
 							router.refresh();
 							setClose();

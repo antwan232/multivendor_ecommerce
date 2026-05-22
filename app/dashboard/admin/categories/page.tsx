@@ -26,9 +26,9 @@ export default async function AdminCategoriesPage() {
 			}
 			modalChildren={<CategoryDetails />}
 			filterValue="name"
-			data={categories}
 			searchPlaceholder="Search category name..."
 			columns={columns}
+			data={categories}
 			newTabLink="/dashboard/admin/categories/new"
 		/>
 	);

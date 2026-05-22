@@ -1,0 +1,39 @@
+//React, Nextjs
+import Image from "next/image";
+import { useEffect, useRef } from "react";
+
+// Import Swiper React components
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+
+// Import Swiper styles
+import "swiper/css";
+//import "swiper/css/pagination";
+//import "swiper/css/navigation";
+
+// Types
+import { ProductVariantImage } from "@/lib/generated/prisma/client";
+
+export default function ProductCardImageSwiper({ images }: { images: ProductVariantImage[] }) {
+	return (
+		<div className="relative mb-2 w-full h-[200px] bg-white contrast-90 rounded-2xl overflow-hidden">
+			<Swiper
+				modules={[Autoplay]}
+				autoplay={{
+					delay: 500,
+				}}>
+				{images.map((img) => (
+					<SwiperSlide key={img.id}>
+						<Image
+							src={img.url}
+							alt={img.alt}
+							width={400}
+							height={400}
+							className="block object-cover h-[200px] w-48 sm:w-[192px]"
+						/>
+					</SwiperSlide>
+				))}
+			</Swiper>
+		</div>
+	);
+}
