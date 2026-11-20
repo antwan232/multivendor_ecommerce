@@ -1,21 +1,32 @@
+"use client";
+
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowDown01Icon, UserIcon } from "@hugeicons/core-free-icons";
 import { MessageIcon, OrderIcon, WishlistIcon } from "@/components/store/icons";
-import { Button } from "@/components/store/ui/button";
+import { Button } from "@/components/ui/button";
+
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { SignOutButton, UserButton } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
-import { ChevronDown, UserIcon } from "lucide-react";
+import { SignOutButton, useUser } from "@clerk/nextjs";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function UserMenu() {
+// Clerk
+const UserButton = dynamic(() => import("@clerk/nextjs").then((mod) => mod.UserButton), {
+	ssr: false,
+});
+
+export default function UserMenu() {
 	// Get the current user
-	const user = await currentUser();
+	const { user } = useUser();
+	const userId = user?.id;
+	console.log("userId: ", userId);
 	return (
-		<div className="relative group">
+		<div className="relative group px-2 ">
 			{/* Trigger */}
 			<div>
-				{user ? (
+				{userId ? (
 					<Image
 						src={user.imageUrl}
 						alt={user.fullName!}
@@ -25,15 +36,14 @@ export default async function UserMenu() {
 					/>
 				) : (
 					<div className="flex h-11 items-center py-0 mx-2 cursor-pointer">
-						<span className="text-2xl">
-							<UserIcon />
+						<span>
+							<HugeiconsIcon icon={UserIcon} className="scale-125" />
 						</span>
-						<div className="ml-1">
-							<span className="block text-xs text-white leading-3">Welcome</span>
+						<div className="ml-1 ">
 							<b className="font-bold text-xs text-white leading-4">
 								<span>Sign in / Register</span>
-								<span className="text-white scale-[60%] align-middle inline-block">
-									<ChevronDown />
+								<span className="text-white scale-[60%] flex justify-center items-center">
+									<HugeiconsIcon icon={ArrowDown01Icon} />
 								</span>
 							</b>
 						</div>
@@ -42,25 +52,38 @@ export default async function UserMenu() {
 			</div>
 			{/* Content */}
 			<div
-				className={cn("hidden absolute top-0 -left-20 group-hover:block cursor-pointer", {
-					"-left-[145px]": user,
+				className={cn("hidden absolute top-0 -left-17 group-hover:block cursor-pointer", {
+					"-left-[200px] lg:-left-[138px]": userId,
 				})}>
-				<div className="relative left-2 mt-10 right-auto bottom-auto pt-2.5 text-[#222] p-0 text-sm z-40">
+				<div className="relative left-2 mt-10 right-auto bottom-auto pt-2.5 text-[#222] p-0 text-sm z-40 ">
 					{/* Triangle */}
-					<div className="w-0 h-0 absolute left-[149px] top-1 right-24 border-l-10! border-l-transparent! border-r-10! border-r-transparent! border-b-10! border-b-white"></div>
+					<div
+						className={cn(
+							"w-0 h-0 absolute top-1 border-l-20! border-l-transparent! border-r-20 border-r-transparent! border-b-20 border-b-white -translate-x-1/2 left-1/2",
+							{
+								"translate-x-0 left-[135px] ": userId,
+							},
+						)}></div>
 					{/* Menu */}
 					<div className="rounded-3xl bg-white text-sm text-[#222] shadow-lg">
 						<div className="w-[305px]">
 							<div className="pt-5 px-6 pb-0">
-								{user ? (
-									<div className="user-avatar border-5 border-slate-200 flex flex-col items-center justify-center w-fit rounded-full mx-auto">
+								{userId ? (
+									<div className="user-avatar flex flex-col items-center justify-center">
 										<UserButton />
 									</div>
 								) : (
 									<div className="space-y-1">
-										<Link href="/sign-in">
-											<Button variant="gray">Sign in</Button>
-										</Link>
+										<Button
+											asChild
+											className="grid content-center">
+											<Link
+												href="/sign-in"
+												className="">
+												Sign in
+											</Link>
+										</Button>
+
 										<Link
 											href="/sign-up"
 											className="h-10 text-sm hover:underline text-main-primary flex items-center justify-center cursor-pointer">
@@ -68,9 +91,13 @@ export default async function UserMenu() {
 										</Link>
 									</div>
 								)}
-								{user && (
+								{userId && (
 									<p className="my-3 text-center text-sm text-main-primary cursor-pointer">
-										<SignOutButton />
+										<Button
+											asChild
+											variant={"link"}>
+											<SignOutButton redirectUrl="/" />
+										</Button>
 									</p>
 								)}
 								<Separator />
@@ -169,3 +196,4 @@ const extraLinks = [
 		link: "",
 	},
 ];
+

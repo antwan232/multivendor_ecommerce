@@ -96,6 +96,38 @@ export const getCategories = async () => {
 };
 
 /**
+ * @function getStorefrontCategories
+ * @description Lightweight category list for the storefront navigation and
+ * category cards. Returns only the fields the UI renders plus the ids of the
+ * products that belong to each category.
+ * @public @readonly
+ * @nextCache cache fetched data
+ * @cacheTag cats
+ * @returns Categories ordered by featured first, then oldest first.
+ */
+export const getStorefrontCategories = async () => {
+	"use cache";
+	cacheTag("cats");
+
+	const categories = await prisma.category.findMany({
+		select: {
+			id: true,
+			name: true,
+			url: true,
+			image: true,
+			products: {
+				select: {
+					id: true,
+				},
+			},
+		},
+		orderBy: [{ featured: "desc" }, { createdAt: "asc" }],
+	});
+
+	return categories;
+};
+
+/**
  * @function deleteCategory
  * @description Deletes a category from the database.
  * @protected

@@ -1,14 +1,14 @@
 "use client";
 
 // React, Next.js
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
 
 // Icons
-import "/node_modules/flag-icons/css/flag-icons.min.css";
-import { ChevronDown } from "lucide-react";
-
+import "flag-icons/css/flag-icons.min.css";
 // Types
-import { Country, SelectMenuOption } from "@/lib/types";
+import { Country, SelectMenuOption } from "@/types/types";
 
 // Country selector
 import CountrySelector from "@/components/shared/country-selector";
@@ -33,7 +33,8 @@ export default function CountryLanguageCurrencySelector({ userCountry }: { userC
 				name: countryData.name,
 				code: countryData.code,
 				city: "",
-				continent: "",
+				region: "",
+      continent: "",
       };
       
 			try {
@@ -67,7 +68,7 @@ export default function CountryLanguageCurrencySelector({ userCountry }: { userC
 						<b className="text-xs font-bold text-white ">
 							USD
 							<span className="text-white scale-[60%] align-middle inline-block">
-								<ChevronDown />
+								<HugeiconsIcon icon={ArrowDown01Icon} />
 							</span>
 						</b>
 					</div>
@@ -76,10 +77,10 @@ export default function CountryLanguageCurrencySelector({ userCountry }: { userC
 
 			{/* Content */}
 			<div className="absolute hidden top-0 group-hover:block cursor-pointer">
-				<div className="relative mt-12 -ml-32 w-70  bg-white rounded-[24px] text-main-primary pt-2 px-6 pb-6 z-50 text-gray-900 shadow-lg">
+				<div className="relative mt-12 -ml-32 w-70  bg-white rounded-3xl text-main-primary pt-2 px-6 pb-6 z-50 text-gray-900 shadow-lg">
 					{/* Triangle */}
 					<div className="w-0 h-0 absolute -top-1.5 right-24 border-l-10 border-l-transparent border-b-10 border-white border-r-10 border-r-transparent" />
-					<div className="mt-4 leading-6 text-[20px] font-bold">Ship to</div>
+					<div className="mt-4 leading-6 text-xl font-bold">Ship to</div>
 					<div className="mt-2">
 						<div className="relative text-main-primary bg-white rounded-lg">
 							<CountrySelector
@@ -94,20 +95,20 @@ export default function CountryLanguageCurrencySelector({ userCountry }: { userC
 								}
 							/>
 							<div>
-								<div className="mt-4 leading-6 text-[20px] font-bold">Language</div>
+								<div className="mt-4 leading-6 text-xl font-bold">Language</div>
 								<div className="relative mt-2.5 h-10 py-0 px-3 border border-black/20 rounded-lg  flex items-center cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap">
 									<div className="align-middle">English</div>
 									<span className="absolute right-2">
-										<ChevronDown className="text-main-primary scale-75" />
+										<HugeiconsIcon icon={ArrowDown01Icon} className="text-main-primary scale-75" />
 									</span>
 								</div>
 							</div>
 							<div>
-								<div className="mt-4 leading-6 text-[20px] font-bold">Currency</div>
+								<div className="mt-4 leading-6 text-xl font-bold">Currency</div>
 								<div className="relative mt-2 h-10 py-0 px-3 border border-black/20 rounded-lg  flex items-center cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap">
 									<div className="align-middle">USD (US Dollar)</div>
 									<span className="absolute right-2">
-										<ChevronDown className="text-main-primary scale-75" />
+										<HugeiconsIcon icon={ArrowDown01Icon} className="text-main-primary scale-75" />
 									</span>
 								</div>
 							</div>

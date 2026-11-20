@@ -1,97 +1,101 @@
-import { SubCategory } from "@prisma/client";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-export default function Links({ subs }: { subs: SubCategory[] }) {
+import { getStorefrontCategories } from "@/actions/category";
+import Reveal from "@/components/shared/reveal";
+
+type FooterItem = {
+  label: string;
+  href: string;
+};
+
+type FooterColumnProps = {
+  id: string;
+  title: string;
+  delay: number;
+  items: FooterItem[];
+};
+
+function FooterColumn({ id, title, delay, items }: FooterColumnProps) {
   return (
-    <div className="grid md:grid-cols-3 gap-4 mt-5 text-sm">
-      {/* SubCategories */}
-      <div className="spcae-y-4">
-        <h1 className="text-lg font-bold">Find it Fast</h1>
-        <ul className="flex flex-col gap-y-1">
-          {subs.map((sub) => (
-            <Link key={sub.id} href={`/browse?subCategory=${sub.url}`}>
-              <li>
-                <span>{sub.name}</span>
-              </li>
-            </Link>
+    <section
+      aria-labelledby={id}
+      className="col-span-12 min-w-0 md:col-span-6 xl:col-span-2">
+      <Reveal delay={delay}>
+        <h3
+          id={id}
+          className="border-b border-[rgba(145,158,171,0.24)] pb-6 text-base leading-6 font-normal text-primary-lighter">
+          {title}
+        </h3>
+        <ul className="flex flex-col gap-y-2 pt-4">
+          {items.map((item) => (
+            <li key={item.label}>
+              <Link
+                href={item.href}
+                className="group flex items-center gap-x-2 rounded-sm py-1.5 min-w-0 text-base leading-6 font-normal text-primary-lighter transition-colors duration-300 ease-in-out hover:text-white focus-visible:ring-2 focus-visible:ring-primary-light focus-visible:ring-offset-2 focus-visible:ring-offset-primary-darker focus-visible:outline-none">
+                <ChevronRight
+                  aria-hidden="true"
+                  className="size-4 shrink-0 text-primary-lighter/70 transition-all duration-300 ease-in-out group-hover:translate-x-1 group-hover:text-white"
+                />
+                <span className="min-w-0 truncate transition-all duration-300 ease-in-out group-hover:translate-x-0.5">{item.label}</span>
+              </Link>
+            </li>
           ))}
         </ul>
-      </div>
-      {/* Profile links */}
-      <div className="space-y-4 md:mt-10">
-        <ul className="flex flex-col gap-y-1">
-          {footer_links.slice(0, 6).map((link) => (
-            <Link href={link.link} key={link.link}>
-              <li>
-                <span>{link.title}</span>
-              </li>
-            </Link>
-          ))}
-        </ul>
-      </div>
-      <div className="space-y-4">
-        <h1 className="text-lg font-bold">Customer care</h1>
-        <ul className="flex flex-col gap-y-1">
-          {footer_links.slice(6).map((link) => (
-            <Link href={link.link} key={link.link}>
-              <li>
-                <span>{link.title}</span>
-              </li>
-            </Link>
-          ))}
-        </ul>
-      </div>
-      {/* Customer care */}
-    </div>
+      </Reveal>
+    </section>
   );
 }
-const footer_links = [
-  {
-    title: "About",
-    link: "/about",
-  },
-  {
-    title: "Contact",
-    link: "/contact",
-  },
-  {
-    title: "Wishlist",
-    link: "/profile/wishlist",
-  },
-  {
-    title: "Compare",
-    link: "/compare",
-  },
-  {
-    title: "FAQ",
-    link: "/faq",
-  },
-  {
-    title: "Store Directory",
-    link: "/profile",
-  },
-  {
-    title: "My Account",
-    link: "/profile",
-  },
-  {
-    title: "Track your Order",
-    link: "/track-order",
-  },
-  {
-    title: "Customer Service",
-    link: "/customer-service",
-  },
-  {
-    title: "Returns/Exchange",
-    link: "/returns-exchange",
-  },
-  {
-    title: "FAQs",
-    link: "/faqs",
-  },
-  {
-    title: "Product Support",
-    link: "/product-support",
-  },
+
+export default function Links({
+  categories,
+}: {
+  categories: { name: string; url: string }[];
+}) {
+  const categoryItems: FooterItem[] = categories.slice(0, 6).map((category) => ({
+    label: category.name,
+    href: `/browse?category=${encodeURIComponent(category.url)}`,
+  }));
+
+  return (
+    <>
+      <FooterColumn
+        id="footer-about"
+        title="About"
+        delay={0.3}
+        items={aboutLinks}
+      />
+      <FooterColumn
+        id="footer-my-account"
+        title="My Account"
+        delay={0.4}
+        items={accountLinks}
+      />
+      <FooterColumn
+        id="footer-categories"
+        title="Categories"
+        delay={0.5}
+        items={categoryItems}
+      />
+    </>
+  );
+}
+
+const aboutLinks: FooterItem[] = [
+  { label: "About Us", href: "/about" },
+  { label: "Terms & Conditions", href: "/terms-and-conditions" },
+  { label: "Careers", href: "#" },
+  { label: "Latest News", href: "#" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "Privacy Policy", href: "#" },
 ];
+
+const accountLinks: FooterItem[] = [
+  { label: "Your Account", href: "/profile" },
+  { label: "Return Policies", href: "/returns-exchange" },
+  { label: "Become a Vendor", href: "#" },
+  { label: "Wishlist", href: "/profile/wishlist" },
+  { label: "Affiliate Program", href: "#" },
+  { label: "FAQs", href: "/faqs" },
+];
+

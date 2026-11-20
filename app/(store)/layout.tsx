@@ -1,25 +1,26 @@
-// Components
-import CategoriesHeader from "@/components/store/layout/categories-header/categories-header";
+// (store): layout shell.
 import Footer from "@/components/store/layout/footer/footer";
-import Header from "@/components/store/layout/header/header";
-
-// React
-import { PropsWithChildren } from "react";
+import Header from "@/components/store/layout/header/header-2";
+import { parseCountryCookie } from "@/utils/country";
+import { cookies } from "next/headers";
+import { ReactNode } from "react";
 
 export default async function StoreLayout({
-	children,
-	params,
-}: PropsWithChildren<{ params: Promise<{ storeSegment: string }> }>) {
-	const { storeSegment } = await params;
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const storedCookies = await cookies();
+  const userCountry = parseCountryCookie(
+    storedCookies.get("userCountry")?.value,
+  );
 
-	return (
-		<div>
-			<div>
-				<Header />
-				<CategoriesHeader storeUrl={storeSegment} />
-			</div>
-			<div> {children}</div>
-			<Footer />
-		</div>
-	);
+  return (
+    <div className="flex min-h-screen w-full flex-col">
+      <Header userCountry={userCountry} />
+
+      <main className="w-full flex-1">{children}</main>
+      <Footer />
+    </div>
+  );
 }
